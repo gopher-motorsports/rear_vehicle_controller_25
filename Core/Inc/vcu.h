@@ -126,18 +126,10 @@
 // ================================== TRACTIVE SYSTEM PARAMETERS 2023 ================================
 #define MOTOR_DIRECTION         1      // Motor direction; 0 is reverse, 1 is forward
 #define MAX_CMD_TORQUE_Nm       150.0f    // The maximum torque that will be commanded
-#define INVERTER_TIMEOUT_ms     200    // The time after which the vehicle will enter STARTUP
-#define INVERTER_ENABLE         1      // Flags to enable the inverter
-#define INVERTER_DISABLE        0   	// Flags to disable the inverter
-#define INVERTER_LOCKOUT        0x80   // Lockout is bit 7 of byte 6
-#define INVERTER_CMD_ID         0x0C0  // The CAN ID of the inverter command
-#define INVERTER_PARAM_ID       0x0C1  // The CAN ID of the parameter message
 #define PARAM_CMD_FAULT_CLEAR   20     // Address of the fault clear parameter
 #define PARAM_CMD_READ          0      // Value to send in parameter command to read value
 #define PARAM_CMD_WRITE         1      // Value to send in parameter command to read value
-#define PARAM_CMD_RESERVED1     0x00   // Reserved value in inverter parameter
 #define PARAM_FAULT_CLEAR_DATA  0      // Value to send in the data field when clearing faults
-#define PARAM_CMD_RESERVED2     0x0000 // Reserved value in inverter parameter
 #define FINAL_DRIVE_RATIO       4.363  // The final drive ratio
 #define WHEEL_DIAMETER_IN       10     // Wheel diameter
 #define MOTOR_POLE_PAIRS   		10 	   // Amount of Pole Pairs of the EMRAX Motor
@@ -146,19 +138,11 @@
 // ==============================================================================================
 
 // ================================== TRACTIVE SYSTEM PARAMETERS 2024 ================================
-#define INVERTER_DRIVE_ENABLE_CMD_ID         0x18E  // The CAN ID for Drive Enable Command
-#define INVERTER_MAX_CURRENT_AC_LIMIT_CMD_ID 0x10E  // The CAN ID for Setting Max Current Limit
-#define INVERTER_SET_CURRENT_AC_CMD_ID     	 0x02E  // The CAN ID for Setting Desired Inverter Current
 #define MAX_TEST_CMD_CURRENT_A    			 550  // The maximum current that will be commanded
-#define DRIVE_ENABLE_INVERTER_TIMEOUT		 200 //Inverter Timeout if
 #define VEHICLE_STOPPED_THRESHOLD			 1000 //If vehicle is stopped for 1 sec
 #define SLOW_MODE							 1 // If vehicle is in slow mode;
 
 
-//#define USING_LAUNCH_CONTROL
-#define RPM_LAUNCH_CONTROL_THRESH			10
-#define STOPPED_TIME_THRESH					250
-#define MAX_LAUNCH_CONTROL_TORQUE_LIMIT	    50	   // 100 nm as max torque when in driving state
 
 // ======================================== I/O PARAMETERS ======================================
 #define MOSFET_PULL_DOWN_ON (GPIO_PIN_SET)
@@ -237,7 +221,6 @@ void can_buffer_handling_loop();
 void update_RTD();         // Ready to drive logic
 void process_sensors();    // Runs safety checks on driver inputs
 void update_gcan_states(); // Updates GopherCAN states
-void process_inverter();   // Updates vehicle state and applicable commands
 void update_outputs();     // Updates brake light and buzzer
 void update_cooling();     // Controls/updates the cooling system
 void update_display_fault_status(); 	// Check all vehicle fault messages and sends best one to display
