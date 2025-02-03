@@ -1,4 +1,4 @@
-module_name: "vcu"
+module_name: "rvc"
 
 # NOTE: Frequencies will be converted to an integer number of ms for a delay
 

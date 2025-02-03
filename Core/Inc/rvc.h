@@ -5,8 +5,8 @@
  *      Author: Ben Abbott
  */
 
-#ifndef INC_VCU_H_
-#define INC_VCU_H_
+#ifndef INC_RVC_H_
+#define INC_RVC_H_
 
 #include "main.h"
 #include "GopherCAN.h"
@@ -233,4 +233,4 @@ void launch_control_sm();
 boolean isVehicleMoving();
 void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
-#endif /* INC_VCU_H_ */
+#endif /* INC_RVC_H_ */

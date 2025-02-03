@@ -1,12 +1,12 @@
 /*
- * vcu.c
+ * rvc.c: created on Jan 23, 2025
  *
- *  Created on: Dec 4, 2022
+ *  vcu.c: created on Dec 4, 2022
  *      Author: Ben Abbott
  */
 
-#include "vcu.h"
-#include "vcu_software_faults.h"
+#include <rvc_software_faults.h>
+#include "rvc.h"
 #include "gopher_sense.h"
 #include "drs.h"
 #include <stdlib.h>
@@ -452,6 +452,7 @@ void update_brakeBias(){
 		update_and_queue_param_float(&brakeBias_amount, bias);
 	}
 }
+
 int get_current_limit(boolean driving_mode){
 	if(driving_mode == SLOW_MODE)
 		return 550; // 10 A

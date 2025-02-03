@@ -5,9 +5,9 @@
  *      Author: chris
  */
 
-#ifndef INC_VCU_SOFTWARE_FAULTS_H_
-#define INC_VCU_SOFTWARE_FAULTS_H_
-#include "vcu.h"
+#ifndef INC_RVC_SOFTWARE_FAULTS_H_
+#define INC_RVC_SOFTWARE_FAULTS_H_
+#include <rvc.h>
 #include "gopher_sense.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,4 +26,4 @@ typedef struct {
 
 extern SOFTWARE_FAULT* TIMED_SOFTWARE_FAULTS[NUM_OF_TIMED_FAULTS];
 void update_struct_fault_data();
-#endif /* INC_VCU_SOFTWARE_FAULTS_H_ */
+#endif /* INC_RVC_SOFTWARE_FAULTS_H_ */

@@ -17,12 +17,12 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <rvc.h>
 #include "main.h"
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "vcu.h"
 #include "gopher_sense.h"
 #include "drs.h"
 /* USER CODE END Includes */
