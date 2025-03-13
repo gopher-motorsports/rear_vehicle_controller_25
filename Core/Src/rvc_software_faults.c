@@ -5,8 +5,6 @@
  *      Author: chris
  */
 
-#include "vcu_software_faults.h"
-#include "vcu.h"
 #include "gopher_sense.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,6 +12,8 @@
 #include "cmsis_os.h"
 #include <float.h>
 #include <math.h>
+#include <rvc.h>
+#include <rvc_software_faults.h>
 
 
 // ======================================= Out of Range Checks ======================================

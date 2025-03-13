@@ -1,12 +1,12 @@
 /*
- * vcu.c
+ * rvc.c: created on Jan 23, 2025
  *
- *  Created on: Dec 4, 2022
+ *  vcu.c: created on Dec 4, 2022
  *      Author: Ben Abbott
  */
 
-#include "vcu.h"
-#include "vcu_software_faults.h"
+#include <rvc_software_faults.h>
+#include "rvc.h"
 #include "gopher_sense.h"
 #include "drs.h"
 #include <stdlib.h>
@@ -39,7 +39,6 @@ boolean current_mode_button_state = 0;
 boolean past_mode_button_state = 0;
 
 VEHICLE_STATE_t vehicle_state = VEHICLE_NO_COMMS;
-U8 inverter_enable_state = INVERTER_DISABLE;
 boolean vehicle_currently_moving = 0;
 LAUNCH_CONTROL_STATES_t launch_control_state = LAUNCH_CONTROL_DISABLED;
 
@@ -69,7 +68,6 @@ U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
 #define HBEAT_LED_DELAY_TIME_ms 500
 #define RTD_DEBOUNCE_TIME_ms 25
-//#define SET_INV_DISABLED() do{ desiredCurrent_A = 0; maxcurrentLimit_A = MAX_TEST_CMD_CURRENT_A; inverter_enable_state = INVERTER_DISABLE; } while(0)
 
 // Initialization code goes here
 void init(CAN_HandleTypeDef* hcan_ptr) {
@@ -80,7 +78,6 @@ void init(CAN_HandleTypeDef* hcan_ptr) {
 
 void main_loop() {
 	process_sensors();
-	process_inverter();
 	update_outputs();
 	update_cooling();
 	update_display_fault_status();
@@ -88,7 +85,6 @@ void main_loop() {
 	LED_task();
 	update_brakeBias();
 	set_DRS_Servo_Position(FALSE);
-	vehicle_currently_moving = isVehicleMoving();
 }
 
 /**
@@ -425,138 +421,8 @@ void update_display_fault_status() {
 }
 U8 ts_volt_sim = 200;
 
-void process_inverter() {
-	U8 inverter_enable_state = INVERTER_DISABLE;
-
-	/*if(faultCode.data != 0x00) {
-		vehicle_state = VEHICLE_FAULT;
-	}*/
-
-	switch (vehicle_state)
-	{
-	case VEHICLE_NO_COMMS:
-		// check too see we are receiving messages from inverter to validate comms
-		if ((HAL_GetTick() -  driveEnableInvStatus_state.info.last_rx) < INVERTER_TIMEOUT_ms)
-		{
-			vehicle_state = VEHICLE_STANDBY;
-		}
-		set_inv_disabled();
-		break;
-
-	case VEHICLE_FAULT:
-		//check to see if fault goes away
-		if(faultCode.data == 0x00) {
-			vehicle_state = VEHICLE_NO_COMMS;
-		}
-		set_inv_disabled();
-		break;
-
-	case VEHICLE_STANDBY:
-		// everything is good to go in this state, we are just waiting to enable the RTD button
-		if (brakePressureFront_psi.data > PREDRIVE_BRAKE_THRESH_psi &&
-				readyToDriveButtonPressed_state &&
-				inputInverterVoltage_V.data > TS_ON_THRESHOLD_VOLTAGE_V)
-		{
-			// Button is pressed, set state to VEHICLE_PREDRIVE
-			vehicle_state = VEHICLE_PREDRIVE;
-			preDriveTimer_ms = 0;
-		}
-		set_inv_disabled();
-		break;
-
-	case VEHICLE_PREDRIVE:
-		// buzz the RTD buzzer for the correct amount of time
-		if(++preDriveTimer_ms > PREDRIVE_TIME_ms) {
-			vehicle_state = VEHICLE_DRIVING;
-		}
-		set_inv_disabled();
-		break;
-
-	case VEHICLE_DRIVING:
-		if(inputInverterVoltage_V.data < TS_ON_THRESHOLD_VOLTAGE_V){
-			vehicle_state = VEHICLE_NO_COMMS;
-		}
-		// vehcile in driving state
-#ifdef USING_LAUNCH_CONTROL
-		launch_control_sm();
-#endif
-		inverter_enable_state = INVERTER_ENABLE;
-		break;
-
-	default:
-		vehicle_state = VEHICLE_NO_COMMS;
-		set_inv_disabled();
-		break;
-	}
-
-	// send the current request
-	desiredInvCurrentPeakToPeak_A.data = desiredCurrent_A;
-	maxCurrentLimitPeakToPeak_A.data = maxcurrentLimit_A;
-	driveEnable_state.data = inverter_enable_state;
-
-	send_group(INVERTER_SET_CURRENT_AC_CMD_ID);
-	send_group(INVERTER_MAX_CURRENT_AC_LIMIT_CMD_ID);
-	send_group(INVERTER_DRIVE_ENABLE_CMD_ID);
-	service_can_tx(hcan);
-}
-
-
-boolean isVehicleMoving() {
-    static U32 vehicle_state_timer = 0;
-
-    if (motor_rpm < RPM_LAUNCH_CONTROL_THRESH) {
-    	vehicle_state_timer++;
-        if(vehicle_state_timer > STOPPED_TIME_THRESH)
-        	vehicle_state_timer = STOPPED_TIME_THRESH + 1;
-
-    } else {
-        vehicle_state_timer = 0; // Reset the timer
-        return TRUE; // Vehicle is moving
-    }
-
-    if(vehicle_state_timer > STOPPED_TIME_THRESH){
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-
-void launch_control_sm(){
-	switch(launch_control_state){
-	case LAUNCH_CONTROL_DISABLED:
-		if(!vehicle_currently_moving)
-			launch_control_state = LAUNCH_CONTROL_ENABLED;
-		break;
-	case LAUNCH_CONTROL_ENABLED:
-		float new_current_limit;
-		if ((motor_rpm < MIN_LIMIT_SPEED_rpm) && (inputInverterVoltage_V.data != 0))
-		{
-			//rearrange power = toruqe * rpm for current --> I = (torque*rpm) /V
-			new_current_limit = (MAX_LAUNCH_CONTROL_TORQUE_LIMIT * ((motor_rpm * MATH_TAU) / SECONDS_PER_MIN) ) / inputInverterVoltage_V.data;
-		}
-		else{
-			launch_control_state = LAUNCH_CONTROL_DISABLED;
-			break;
-		}
-		if (new_current_limit < maxcurrentLimit_A) maxcurrentLimit_A = new_current_limit;
-
-		break;
-	}
-}
-
-
-
 
 void update_outputs() {
-	if(vehicle_state == VEHICLE_PREDRIVE) {
-		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_ON);
-		update_and_queue_param_u8(&vehicleBuzzerOn_state, TRUE);
-	} else {
-		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_OFF);
-		update_and_queue_param_u8(&vehicleBuzzerOn_state, FALSE);
-	}
-
 	if(brakePressureFront_psi.data > BRAKE_LIGHT_THRESH_psi) {
 		HAL_GPIO_WritePin(BRK_LT_GPIO_Port, BRK_LT_Pin, MOSFET_PULL_DOWN_ON);
 		update_and_queue_param_u8(&brakeLightOn_state, TRUE);
@@ -580,17 +446,13 @@ void LED_task(){
 	HAL_GPIO_WritePin(STATUS_B_GPIO_Port, STATUS_B_Pin, SET);
 }
 
-void set_inv_disabled(){
-	desiredCurrent_A = 0;
-	maxcurrentLimit_A = get_current_limit(current_driving_mode);
-	inverter_enable_state = INVERTER_DISABLE;
-}
 void update_brakeBias(){
 //	if (brakePressureFront_psi.data > BRAKE_BIAS_PRESS_THRESH_psi && brakePressureRear_psi.data > BRAKE_BIAS_PRESS_THRESH_psi){
 //		float bias = ((6.365*brakePressureFront_psi.data)/(6.365*brakePressureFront_psi.data + 3.125* brakePressureRear_psi.data))*100;
 //		update_and_queue_param_float(&brakeBias_amount, bias);
 //	}
 }
+
 int get_current_limit(boolean driving_mode){
 	if(driving_mode == SLOW_MODE)
 		return 550; // 10 A
