@@ -97,7 +97,6 @@
 					<sourceEntries>
 						<entry excluding="gophercan-lib/other_files|gophercan-lib/gophercannon|gophercan-lib/example_files|gophercan-lib/config_outdated" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -195,7 +194,6 @@
 					<sourceEntries>
 						<entry excluding="gophercan-lib/other_files|gophercan-lib/gophercannon|gophercan-lib/example_files|gophercan-lib/config_outdated" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
