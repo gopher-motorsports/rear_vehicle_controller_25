@@ -128,9 +128,9 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(PCB_BUZZER_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : CURR_FAULT_5V_Pin CURR_FAULT_5V_2_Pin BSPD_TS_SNS_FAULT_Pin BSPD_TS_BRK_FAULT_Pin
-                           BSPD_TS_BRK_FAULTD7_Pin */
+                           BSPD_BRK_FAULT_Pin */
   GPIO_InitStruct.Pin = CURR_FAULT_5V_Pin|CURR_FAULT_5V_2_Pin|BSPD_TS_SNS_FAULT_Pin|BSPD_TS_BRK_FAULT_Pin
-                          |BSPD_TS_BRK_FAULTD7_Pin;
+                          |BSPD_BRK_FAULT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);

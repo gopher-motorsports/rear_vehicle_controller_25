@@ -196,7 +196,8 @@ void update_cooling() {
 		}
 	}
 
-	HAL_GPIO_WritePin(RAD_FAN_GPIO_Port, RAD_FAN_Pin, !(rad_fan_state));
+//	HAL_GPIO_WritePin(RAD_FAN_GPIO_Port, RAD_FAN_Pin, !(rad_fan_state));
+// Communicate with PLM to turn on RAD_FAN
 
 	//pump cooling
 /*#ifdef USING_PUMP_PWM

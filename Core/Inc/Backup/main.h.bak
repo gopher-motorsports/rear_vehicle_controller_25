@@ -117,8 +117,8 @@ void Error_Handler(void);
 #define RTD_BUTTON_GPIO_Port GPIOB
 #define CAN_TX1_Pin GPIO_PIN_13
 #define CAN_TX1_GPIO_Port GPIOB
-#define PUMP_PWM_Pin GPIO_PIN_8
-#define PUMP_PWM_GPIO_Port GPIOC
+#define PUMP_OUTPUT_Pin GPIO_PIN_8
+#define PUMP_OUTPUT_GPIO_Port GPIOC
 #define TH_SDA_Pin GPIO_PIN_9
 #define TH_SDA_GPIO_Port GPIOC
 #define TH_SCL_Pin GPIO_PIN_8
@@ -149,8 +149,8 @@ void Error_Handler(void);
 #define BSPD_TS_SNS_FAULT_GPIO_Port GPIOD
 #define BSPD_TS_BRK_FAULT_Pin GPIO_PIN_6
 #define BSPD_TS_BRK_FAULT_GPIO_Port GPIOD
-#define BSPD_TS_BRK_FAULTD7_Pin GPIO_PIN_7
-#define BSPD_TS_BRK_FAULTD7_GPIO_Port GPIOD
+#define BSPD_BRK_FAULT_Pin GPIO_PIN_7
+#define BSPD_BRK_FAULT_GPIO_Port GPIOD
 #define DRS_PWM_Pin GPIO_PIN_4
 #define DRS_PWM_GPIO_Port GPIOB
 #define CAN_RX1_Pin GPIO_PIN_5
