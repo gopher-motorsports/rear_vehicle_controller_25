@@ -438,8 +438,23 @@ void LED_task(){
 	static U32 last_led = 0;
 	if(HAL_GetTick() - last_led >= HBEAT_LED_DELAY_TIME_ms) {
 		HAL_GPIO_TogglePin(MCU_STATUS_LED_GPIO_Port, MCU_STATUS_LED_Pin);
+		HAL_GPIO_TogglePin(BRK_LT_GPIO_Port, BRK_LT_Pin);
+		HAL_GPIO_TogglePin(BUZZER_GPIO_Port, BUZZER_Pin);
+//		HAL_GPIO_TogglePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin);
+
 		last_led = HAL_GetTick();
 	}
+
+	HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
+	HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 1);
+	HAL_GPIO_WritePin(HARDFAULT_LED_GPIO_Port, HARDFAULT_LED_Pin, 1);
+	HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_1_GPIO_Port, PULLUP_GATE_1_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_2_GPIO_Port, PULLUP_GATE_2_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_3_GPIO_Port, PULLUP_GATE_3_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_4_GPIO_Port, PULLUP_GATE_4_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_5_GPIO_Port, PULLUP_GATE_5_Pin, 1);
+//	HAL_GPIO_WritePin(PULLUP_GATE_6_GPIO_Port, PULLUP_GATE_6_Pin, 1);
 }
 
 void update_brakeBias(){
