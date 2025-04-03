@@ -38,7 +38,7 @@
 		<link>
 			<name>Core/gophercan-lib</name>
 			<type>2</type>
-			<location>C:/Users/Alex T/Documents/GitHub/gophercan-lib</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/gophercan-lib</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/adc.c</name>
