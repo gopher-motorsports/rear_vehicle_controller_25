@@ -22,6 +22,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "rvc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -130,6 +131,7 @@ void task_MainTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	main_loop();
     osDelay(1);
   }
   /* USER CODE END task_MainTask */
@@ -148,6 +150,7 @@ void task_BufferHandling(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	can_buffer_handling_loop();
     osDelay(1);
   }
   /* USER CODE END task_BufferHandling */
