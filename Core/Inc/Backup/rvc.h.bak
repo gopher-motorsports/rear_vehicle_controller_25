@@ -227,6 +227,7 @@ void update_display_fault_status(); 	// Check all vehicle fault messages and sen
 void update_brakeBias();
 void limit_motor_torque();
 void LED_task();
+void update_TSSI_LED();
 void pass_on_timer_info(); //this is def not the best way to do this
 void set_DRS_Servo_Position(U8 start_up_condition);
 void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel);
