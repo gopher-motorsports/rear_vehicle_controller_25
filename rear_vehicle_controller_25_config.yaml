@@ -3,7 +3,7 @@ module_name: "rvc"
 # NOTE: Frequencies will be converted to an integer number of ms for a delay
 
 buckets:
-    high_frequency_vcu:
+    high_frequency_ADCs:
         frequency_hz: 250
         parameters:
             currentSensorHigh_V:
@@ -45,4 +45,111 @@ buckets:
             radWaterTempOut_C:
                 ADC: ADC1_IN10
                 sensor: temperature_sensor
+                samples_buffered: 1
+
+    low_frequency:
+        frequency_hz: 100
+        parameters:
+        # BSPD Faults
+            bspdBrakePressureSensorFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            bspdTractiveSystemCurrentSensorFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            bspdTractiveSystemBrakingFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+
+            # VCU Faults
+            vcuBrakePressureSensorFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuPedalPosition1Fault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuPedalPosition2Fault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuTractiveSystemCurrentSensorFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuPedalPositionCorrelationFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuPedalPositionBrakingFault_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            # If the VCU is clamping current to prevent a BSPD fault
+            vcuBrakingClampingCurrent_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            
+            
+            # Other parameters
+            vcuCurrentRequested_A:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vcuMaxCurrentLimit_A:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            coolantPumpPower_percent:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            # brakeBias_amount:
+            #     ADC: NON_ADC
+            #     sensor: NON_ADC
+            #     samples_buffered: 1
+            switch1On_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            switch2On_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+
+            gpio1_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            gpio2_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1                
+            vcuTemp_C:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            # displayFaultStatus_state:
+            #     ADC: NON_ADC
+            #     sensor: NON_ADC
+            #     samples_buffered: 1
+            
+            brakeLightOn_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            vehicleBuzzerOn_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            
+            # Gophersense heartbeat
+            vcuGSenseStatus_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
                 samples_buffered: 1
