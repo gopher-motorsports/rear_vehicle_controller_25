@@ -140,7 +140,7 @@ void update_gcan_states() {
 	update_and_queue_param_float(&vcuCurrentRequested_A, desiredCurrent_A);
 	update_and_queue_param_float(&vcuMaxCurrentLimit_A, maxcurrentLimit_A );
 	// Cooling
-	update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
+//	update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
 #ifdef USING_PUMP_PWM
 	update_and_queue_param_u8(&coolantPumpPower_percent, (pwm_pump_intensity/32000) * 100); //calculate duty cycle percent
 	digital_pump_state
@@ -149,7 +149,7 @@ void update_gcan_states() {
 #endif
 	// Vehicle state
 	update_and_queue_param_u8(&vehicleState_state, vehicle_state);
-	update_and_queue_param_u8(&readyToDriveButton_state, readyToDriveButtonPressed_state);
+//	update_and_queue_param_u8(&readyToDriveButton_state, readyToDriveButtonPressed_state);
 
 	update_and_queue_param_u8(&vcuGSenseStatus_state, HAL_GPIO_ReadPin(GSENSE_LED_GPIO_Port, GSENSE_LED_Pin));
 	// Calculate wheel speed from rpm, change rpm to
