@@ -25,7 +25,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "rvc.h"
+#include "adc.h"
+#include "gopher_sense.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,6 +120,7 @@ void MX_FREERTOS_Init(void) {
 }
 
 /* USER CODE BEGIN Header_task_MainTask */
+uint32_t my_data;
 /**
   * @brief  Function implementing the main_task thread.
   * @param  argument: Not used
@@ -130,8 +133,12 @@ void task_MainTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	my_data = HAL_ADC_GetValue(&hadc1);
+	//HAL_Delay(1);
 	main_loop();
-    osDelay(1);
+	osDelay(1);
   }
   /* USER CODE END task_MainTask */
 }

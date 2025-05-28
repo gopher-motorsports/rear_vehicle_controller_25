@@ -77,14 +77,15 @@ void init(CAN_HandleTypeDef* hcan_ptr) {
 }
 
 void main_loop() {
-	process_sensors();
-	update_outputs();
-	update_cooling();
-	update_display_fault_status();
+//	update_and_queue_param_float(&brakeTempRearLeft_C, brakeTempRearLeft_C.data);
+//	process_sensors();
+//	update_outputs();
+//	update_cooling();
+//	update_display_fault_status();
 	update_gcan_states(); // Should be after proceass_sensors
 	LED_task();
-	update_brakeBias();
-	set_DRS_Servo_Position(FALSE);
+//	update_brakeBias();
+//	set_DRS_Servo_Position(FALSE);
 }
 
 /**
