@@ -113,6 +113,7 @@ int main(void)
   init_Pump(&htim5,TIM_CHANNEL_2);
 #endif
   init_DRS_servo(&htim1, TIM_CHANNEL_1);
+  init_pullup_configs();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

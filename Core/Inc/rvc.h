@@ -211,7 +211,6 @@ typedef enum {
 	INVERTER_FAULT
 } DISPLAY_FAULT_STATUS_t;
 
-extern VEHICLE_STATE_t vehicle_state;
 
 
 void init(CAN_HandleTypeDef* hcan_ptr);
@@ -221,7 +220,7 @@ void can_buffer_handling_loop();
 void update_RTD();         // Ready to drive logic
 void process_sensors();    // Runs safety checks on driver inputs
 void update_gcan_states(); // Updates GopherCAN states
-void update_outputs();     // Updates brake light and buzzer
+void update_brakelight_and_buzzer();   // Updates brake light and buzzer
 void update_cooling();     // Controls/updates the cooling system
 void update_display_fault_status(); 	// Check all vehicle fault messages and sends best one to display
 void update_brakeBias();
@@ -235,4 +234,5 @@ void launch_control_sm();
 boolean isVehicleMoving();
 void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
+void init_pullup_configs();
 #endif /* INC_RVC_H_ */
