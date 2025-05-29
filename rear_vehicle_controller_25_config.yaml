@@ -153,3 +153,8 @@ buckets:
                 ADC: NON_ADC
                 sensor: NON_ADC
                 samples_buffered: 1
+
+            sdcBreakPoint:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1

@@ -64,7 +64,12 @@ U16 pwm_pump_intensity = PUMP_INTENSITY_OFF;
 
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
+<<<<<<< Updated upstream
 
+=======
+// Shut Down Circuit Sensing
+uint8_t shutDownBreakPoint = 0;
+>>>>>>> Stashed changes
 
 #define HBEAT_LED_DELAY_TIME_ms 500
 #define RTD_DEBOUNCE_TIME_ms 25
@@ -84,7 +89,13 @@ void main_loop() {
 	update_gcan_states(); // Should be after proceass_sensors
 	LED_task();
 	update_brakeBias();
+<<<<<<< Updated upstream
 	set_DRS_Servo_Position(FALSE);
+=======
+
+    set_DRS_Servo_Position(FALSE); //DRS set position
+	shutDownCircuitStatus();
+>>>>>>> Stashed changes
 }
 
 /**
@@ -474,6 +485,7 @@ void update_brakeBias(){
 //	}
 }
 
+<<<<<<< Updated upstream
 int get_current_limit(boolean driving_mode){
 	if(driving_mode == SLOW_MODE)
 		return 550; // 10 A
@@ -482,3 +494,25 @@ int get_current_limit(boolean driving_mode){
 }
 
 // End of vcu.c
+=======
+void shutDownCircuitStatus(){
+	if(0) {
+		// 2. PLM.9 -> Inertial Switch.1 ~ PLM
+		shutDownBreakPoint = 2;
+	} else if(0) {
+		// 3. Inertial Switch.2 -> BOT.1 ~ FVC.7
+		shutDownBreakPoint = 3;
+	} else if(sdcStatus17.data == 1){
+		// charger board 17
+		shutDownBreakPoint = 17;
+	} else if(0){
+		// charger board 18
+		shutDownBreakPoint = 18;
+	} else if(0){
+		// charger board 19
+		shutDownBreakPoint = 19;
+	}
+	update_and_queue_param_u8(&sdcBreakPoint, shutDownBreakPoint);
+
+}
+>>>>>>> Stashed changes

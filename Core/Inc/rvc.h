@@ -235,4 +235,9 @@ void launch_control_sm();
 boolean isVehicleMoving();
 void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
+<<<<<<< Updated upstream
+=======
+void init_pullup_configs();
+void shutDownCircuitStatus();
+>>>>>>> Stashed changes
 #endif /* INC_RVC_H_ */
