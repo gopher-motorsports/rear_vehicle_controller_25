@@ -14,26 +14,26 @@ buckets:
                 ADC: ADC1_IN15
                 sensor: brake_temp_sensor
                 samples_buffered: 1
-            # brakeTempRearRight_C:
-            #     ADC: ADC1_IN6
-            #     sensor: brake_temp_sensor
-            #     samples_buffered: 1
-            # shockPosRearLeft_mm:
-            #     ADC: ADC1_IN0
-            #     sensor: linear_pos_sensor_50
-            #     samples_buffered: 1
-            # shockPosRearRight_mm:
-            #     ADC: ADC1_IN5
-            #     sensor: linear_pos_sensor_50
-            #     samples_buffered: 1
-            # brakePressureRear_psi:
-            #     ADC: ADC1_IN4
-            #     sensor: brake_pressure_sensor
-            #     samples_buffered: 1
-            # currentSensorLow_V:
-            #     ADC: ADC1_IN8
-            #     sensor: full_raw_voltage_sensor
-            #     samples_buffered: 1
+            brakeTempRearRight_C:
+                ADC: ADC1_IN6
+                sensor: brake_temp_sensor
+                samples_buffered: 1
+            shockPosRearLeft_mm:
+                ADC: ADC1_IN0
+                sensor: linear_pos_sensor_50
+                samples_buffered: 1
+            shockPosRearRight_mm:
+                ADC: ADC1_IN5
+                sensor: linear_pos_sensor_50
+                samples_buffered: 1
+            brakePressureRear_psi:
+                ADC: ADC1_IN4
+                sensor: brake_pressure_sensor
+                samples_buffered: 1
+            currentSensorLow_V:
+                ADC: ADC1_IN8
+                sensor: full_raw_voltage_sensor
+                samples_buffered: 1
             # rearRideHeight_mm:
             #     ADC: ADC1_IN9
             #     sensor: full_raw_voltage_sensor # TODO make ride height sensor in gophersense
@@ -120,21 +120,8 @@ buckets:
             switch2On_state:
                 ADC: NON_ADC
                 sensor: NON_ADC
-                samples_buffered: 1
-
-            gpio1_state:
-                ADC: NON_ADC
-                sensor: NON_ADC
-                samples_buffered: 1
-            gpio2_state:
-                ADC: NON_ADC
-                sensor: NON_ADC
-                samples_buffered: 1                
+                samples_buffered: 1               
             # vcuTemp_C:
-            #     ADC: NON_ADC
-            #     sensor: NON_ADC
-            #     samples_buffered: 1
-            # displayFaultStatus_state:
             #     ADC: NON_ADC
             #     sensor: NON_ADC
             #     samples_buffered: 1
@@ -147,9 +134,3 @@ buckets:
                 ADC: NON_ADC
                 sensor: NON_ADC
                 samples_buffered: 1
-            
-            # Gophersense heartbeat
-            # vcuGSenseStatus_state:
-            #     ADC: NON_ADC
-            #     sensor: NON_ADC
-            #     samples_buffered: 1

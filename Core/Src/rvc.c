@@ -88,10 +88,13 @@ void update_gcan_states() {
 	//TS Brake Fault --> Hard breaking + 5kW of power from tractive system
 	update_and_queue_param_u8(&bspdTractiveSystemBrakingFault_state, TS_braking_hardware_fault_active);
 
+
+	//BPSD Fault
+
 	// ==============================================================================================
 
 	// Cooling
-	//update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
+	update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
 	update_and_queue_param_u8(&coolantPumpPower_percent, digital_pump_state*100);
 }
 
@@ -133,7 +136,6 @@ void update_cooling() {
 		}
 	}
 
-	//HAL_GPIO_WritePin(RAD_FAN_GPIO_Port, RAD_FAN_Pin, !(rad_fan_state));
 
 	for(int i = 0; i < total_cooling_thresholds; i++){
 			if(digital_pump_state == PUMP_DIGITAL_OFF && (temp_readings[i] >= (cooling_thresholds[i] + HYSTERESIS_DIGITAL))){
