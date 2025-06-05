@@ -67,7 +67,7 @@
 
 // ====================================== SAFETY PARAMETERS =====================================
 // -------------------------------------- Input Validation --------------------------------------
-#define INPUT_TRIP_DELAY_ms 85  // The amount of time it takes an input fault to take effect
+#define INPUT_DELAY_ms 85  // In ms The amount of time it takes an input fault to take effect
 
 // -------------------------------------- APPS/Brake Check --------------------------------------
 // This check is done using APPS1 (since APPS1 determines the applied torque) and the BSE
@@ -171,8 +171,20 @@
 #define BSPD_BRAKE_FAULT     GPIO_PIN_RESET
 #define BSPD_TS_SNS_FAULT    GPIO_PIN_RESET
 #define BSPD_TS_BRK_FAULT    GPIO_PIN_SET
-// ==============================================================================================
+// =========================================Current Sensing=====================================================
 
+#define CURRENT_HIGH_RAIL_THRESHOLD             852
+#define CURRENT_LOW_RAIL_THRESHOLD              87
+#define CURRENT_LOW_TO_HIGH_SWITCH_THRESHOLD    75
+// The size in Amps across which current from channel 1 is blended with channel 2
+#define CHANNEL_FILTERING_WIDTH 4
+
+typedef enum
+{
+	UNINITIALIZED = 0,	// Value on startup
+	WORKING,			// Data nominal
+	FAULTING			// Unavailable data or hardware issue
+} Sensor_Status_E;
 
 // =================== THROTTLE CALCULATION ===================
 // Throttle is calculated using APPS1 with APPS2 being used
@@ -235,4 +247,5 @@ boolean isVehicleMoving();
 void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
 void init_pullup_configs();
+float getTractiveSystemCurrent();
 #endif /* INC_RVC_H_ */

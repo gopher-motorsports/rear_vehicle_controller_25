@@ -64,8 +64,8 @@ void set_DRS_Servo_Position(U8 start_up_condition){
 }
 
 bool drs_shutoff_conditions_reached(){
-	static long current_tick = 0;
-	current_tick = HAL_GetTick();
+	//static long current_tick = 0;
+	//current_tick = HAL_GetTick();
 
 	//if you haven't received brake or steering angle data in .2 seconds don't close drs
 //	if(current_tick - brakePressureFront_psi.info.last_rx < CAN_VALUE_TRUST_THRESHOLD){// ||
