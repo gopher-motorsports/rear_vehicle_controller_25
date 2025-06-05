@@ -75,12 +75,19 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(CURR_FAULT_12V_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BRK_LT_Pin BUZZER_Pin MCU_AUX_1_Pin MCU_AUX_2_Pin
-                           PULLUP_GATE_3_Pin PULLUP_GATE_4_Pin PULLUP_GATE_2_Pin PULLUP_GATE_1_Pin
-                           PULLUP_GATE_6_Pin PULLUP_GATE_5_Pin GSENSE_LED_Pin MCU_STATUS_LED_Pin */
+                           GSENSE_LED_Pin MCU_STATUS_LED_Pin */
   GPIO_InitStruct.Pin = BRK_LT_Pin|BUZZER_Pin|MCU_AUX_1_Pin|MCU_AUX_2_Pin
-                          |PULLUP_GATE_3_Pin|PULLUP_GATE_4_Pin|PULLUP_GATE_2_Pin|PULLUP_GATE_1_Pin
-                          |PULLUP_GATE_6_Pin|PULLUP_GATE_5_Pin|GSENSE_LED_Pin|MCU_STATUS_LED_Pin;
+                          |GSENSE_LED_Pin|MCU_STATUS_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PULLUP_GATE_3_Pin PULLUP_GATE_4_Pin PULLUP_GATE_2_Pin PULLUP_GATE_1_Pin
+                           PULLUP_GATE_6_Pin PULLUP_GATE_5_Pin */
+  GPIO_InitStruct.Pin = PULLUP_GATE_3_Pin|PULLUP_GATE_4_Pin|PULLUP_GATE_2_Pin|PULLUP_GATE_1_Pin
+                          |PULLUP_GATE_6_Pin|PULLUP_GATE_5_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
