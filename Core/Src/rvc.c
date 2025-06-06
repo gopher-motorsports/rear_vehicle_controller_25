@@ -68,6 +68,7 @@ void init(CAN_HandleTypeDef* hcan_ptr) {
 }
 
 void main_loop() {
+	check_faults();
     update_cooling();
 	update_gcan_states(); // Should be after proceass_sensors
 	LED_task();
@@ -97,7 +98,7 @@ void check_faults(){
 	//reading faults from hardware, fault active = 0 so inverted signaling
 	rear_brake_hardware_fault_active = !HAL_GPIO_ReadPin(BSPD_BRK_FAULT_GPIO_Port, BSPD_BRK_FAULT_Pin);
 	current_hardware_range_fault_active = !HAL_GPIO_ReadPin(BSPD_TS_SNS_FAULT_GPIO_Port, BSPD_TS_SNS_FAULT_Pin);
-	TS_braking_hardware_fault_active = !HAL_GPIO_ReadPin(BSPD_TS_BRK_FAULT_GPIO_Port, BSPD_TS_BRK_FAULT_Pin);
+	TS_braking_hardware_fault_active = HAL_GPIO_ReadPin(BSPD_TS_BRK_FAULT_GPIO_Port, BSPD_TS_BRK_FAULT_Pin);
 
 	//Rear Brake Pressure and current out of range
 	if(rear_brake_hardware_fault_active){

@@ -231,6 +231,7 @@ void can_buffer_handling_loop();
 
 void update_RTD();         // Ready to drive logic
 void process_sensors();    // Runs safety checks on driver inputs
+void check_faults();
 void update_gcan_states(); // Updates GopherCAN states
 void update_brakelight_and_buzzer();   // Updates brake light and buzzer
 void update_cooling();     // Controls/updates the cooling system
