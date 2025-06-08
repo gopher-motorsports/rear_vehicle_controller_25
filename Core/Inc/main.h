@@ -71,8 +71,6 @@ void Error_Handler(void);
 #define PULSE_SENSOR_4_GPIO_Port GPIOA
 #define PULSE_SENSOR_5_Pin GPIO_PIN_2
 #define PULSE_SENSOR_5_GPIO_Port GPIOA
-#define VOLT_SENSE_1_Pin GPIO_PIN_5
-#define VOLT_SENSE_1_GPIO_Port GPIOC
 #define PULSE_SENSOR_3_Pin GPIO_PIN_2
 #define PULSE_SENSOR_3_GPIO_Port GPIOB
 #define PULLUP_GATE_3_Pin GPIO_PIN_9
