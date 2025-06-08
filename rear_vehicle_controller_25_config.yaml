@@ -8,31 +8,31 @@ buckets:
         parameters:
             currentSensorHigh_A:
                 ADC: ADC1_IN3
-                sensor: current_sensor_2
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             brakeTempRearLeft_C: #Volt Sense 1
                 ADC: ADC1_IN15
-                sensor: brake_temp_sensor
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             brakeTempRearRight_C: #Volt Sense 2
                 ADC: ADC1_IN6
-                sensor: brake_temp_sensor
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             shockPosRearLeft_mm: #Volt Sense 3
                 ADC: ADC1_IN0
-                sensor: linear_pos_sensor_50
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             shockPosRearRight_mm: #Volt Sense 4
                 ADC: ADC1_IN5
-                sensor: linear_pos_sensor_50
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             brakePressureRear_psi:
                 ADC: ADC1_IN4
-                sensor: brake_pressure_sensor
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             currentSensorLow_A:
                 ADC: ADC1_IN8
-                sensor: current_sensor_1
+                sensor: full_raw_voltage_sensor
                 samples_buffered: 1
             currentSensor_A:
                 ADC: NON_ADC
