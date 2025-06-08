@@ -14,10 +14,10 @@ buckets:
                 ADC: ADC1_IN15
                 sensor: full_raw_voltage_sensor
                 samples_buffered: 1
-            # brakeTempRearRight_C: #Volt Sense 2
-            #     ADC: ADC1_IN6
-            #     sensor: full_raw_voltage_sensor
-            #     samples_buffered: 1
+            brakeTempRearRight_C: #Volt Sense 2
+                ADC: ADC1_IN6
+                sensor: full_raw_voltage_sensor
+                samples_buffered: 1
             # shockPosRearLeft_mm: #Volt Sense 3
             #     ADC: ADC1_IN0
             #     sensor: linear_pos_sensor_50
