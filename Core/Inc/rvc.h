@@ -151,6 +151,8 @@
 #define PLM_CONTROL_OFF (GPIO_PIN_SET)
 #define RAD_FAN_ON (GPIO_PIN_SET)
 #define RAD_FAN_OFF (GPIO_PIN_RESET)
+#define PCB_BUZZ_ON (GPIO_PIN_SET)
+#define PCB_BUZZ_ON (GPIO_PIN_RESET)
 // ==============================================================================================
 
 // ======================================= BSPD PARAMETERS ======================================
@@ -178,6 +180,7 @@
 #define CURRENT_LOW_TO_HIGH_SWITCH_THRESHOLD    75
 // The size in Amps across which current from channel 1 is blended with channel 2
 #define CHANNEL_FILTERING_WIDTH 4
+
 
 typedef enum
 {
