@@ -68,7 +68,7 @@
 // ====================================== SAFETY PARAMETERS =====================================
 // -------------------------------------- Input Validation --------------------------------------
 #define INPUT_DELAY_ms 85  // In ms The amount of time it takes an input fault to take effect
-
+#define BSPD_DELAY_ms 400 // In ms amount of time before bspd fault trips
 // -------------------------------------- APPS/Brake Check --------------------------------------
 // This check is done using APPS1 (since APPS1 determines the applied torque) and the BSE
 #define APPS_BRAKE_PRESS_THRESH_psi  100.0f  // The minimum amount of brake pressure that will trip
@@ -106,7 +106,7 @@
 
 #define HYSTERESIS_DIGITAL	      3.0f // Hysteresis when confined to digital signal (on/off)
 #define HYSTERESIS_ANALOG	      3.0f // Hysteresis when have PWM output signal (variable duty cycle)
-
+#define DRS_HYSTERESIS			  5.0f
 //#define USING_PUMP_PWM
 #define PUMP_INTENSITY_OFF		  0  //0% duty cycle --> 0/31999
 #define PUMP_INTENSITY_1		  8000 //25% duty cycle --> 8000/31999

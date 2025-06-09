@@ -8,6 +8,7 @@
 #include "main.h"
 #include "gopher_sense.h"
 #include "pulse_sensor.h"
+#include "rvc.h"
 
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal.h"
@@ -21,12 +22,16 @@ TIM_HandleTypeDef* DRS_Timer;
 U32 DRS_Channel;
 int rot_dial_timer_val = 0; //keeping this in here if we want to use rotary dial
 U8 drs_button_state;
-U8 drs_steering_angle_limit_state = 0; //SA = steering angle
-U8 next_steering_angle_limit_state = 0;
 
 //local function prototypes
 bool drs_shutoff_conditions_reached();
 void update_power_channel(POWER_CHANNEL* channel);
+
+//DRS brake thresholds
+typedef enum {
+	NORMAL,
+	TRIPPED = 1
+} DRS_BRAKE_STATES;
 
 void init_DRS_servo(TIM_HandleTypeDef* timer_address, U32 channel){
 	DRS_Timer = timer_address;
@@ -60,58 +65,31 @@ void set_DRS_Servo_Position(U8 start_up_condition){
 		}
 
 	}
-	drs_steering_angle_limit_state = next_steering_angle_limit_state;
 }
 
 bool drs_shutoff_conditions_reached(){
-	//static long current_tick = 0;
-	//current_tick = HAL_GetTick();
-
-	//if you haven't received brake or steering angle data in .2 seconds don't close drs
-//	if(current_tick - brakePressureFront_psi.info.last_rx < CAN_VALUE_TRUST_THRESHOLD){// ||
-////	   current_tick - brakePressureRear_psi.info.last_rx  < CAN_VALUE_TRUST_THRESHOLD){
-//	   if(brakePressureFront_psi.data > BRAKE_SHUTOFF_THRESHOLD){// ||
-////	   	   brakePressureRear_psi.data > BRAKE_SHUTOFF_THRESHOLD){
-//	   		return true;
-//	   	}
-//	}
-/*
-	if(current_tick - steeringAngle_deg.info.last_rx < CAN_VALUE_TRUST_THRESHOLD){
-		switch (drs_steering_angle_limit_state)
-			{
-			case NORMAL_STATE:
-				if(steeringAngle_deg.data < STEERING_ANGLE_LEFT_SHUTOFF){
-					next_steering_angle_limit_state = LEFT_LIMIT_BREACHED;
-					return true;
-				}
-
-				if(steeringAngle_deg.data > STEERING_ANGLE_RIGHT_SHUTOFF){
-					next_steering_angle_limit_state = RIGHT_LIMIT_BREACHED;
-					return true;
-				}
-				else{return false;}
-				break;
-
-
-			case LEFT_LIMIT_BREACHED:
-				if(steeringAngle_deg.data > STEERING_ANGLE_LEFT_RETURN){
-					next_steering_angle_limit_state = NORMAL_STATE;
-					return false;
-				}
-				else{return true;}
-				break;
-
-			case RIGHT_LIMIT_BREACHED:
-				if(steeringAngle_deg.data < STEERING_ANGLE_RIGHT_RETURN){
-					next_steering_angle_limit_state = NORMAL_STATE;
-					return false;
-				}
-				else{return true;}
-				break;
-		}
+	static DRS_BRAKE_STATES drs_brake_state = NORMAL;
+	switch (drs_brake_state){
+		case TRIPPED:
+			//have let off the brakes --> closed to open
+			if(brakePressureRear_psi.data > BRAKE_SHUTOFF_THRESHOLD - DRS_HYSTERESIS){// ||
+				  drs_brake_state = NORMAL;
+				  return false;
+		    }
+			return true; //DRS should be closed
+			break;
+		case NORMAL:
+		default:
+			//have breached DRS threshold --> open to closed
+			if(brakePressureRear_psi.data > BRAKE_SHUTOFF_THRESHOLD + DRS_HYSTERESIS){// ||
+				  drs_brake_state = TRIPPED;
+				  return true;
+			}
+			return false; //drs should be open
+			break;
 	}
-	*/
-	//reaches here if all of the data is not being updated on the can bus
+
+	//reaches here we are in trouble
 	return false;
 
 }

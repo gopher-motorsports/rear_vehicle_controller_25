@@ -22,7 +22,7 @@ CAN_HandleTypeDef* hcan;
 uint16_t rear_brake_press_timer = 0;
 uint16_t current_sensor_timer = 0;
 uint16_t TS_braking_timer = 0;
-
+uint16_t bspd_timer = 0;
 //Fault Tripped States
 boolean rear_brake_press_fault_tripped = FALSE;
 boolean current_sensor_fault_tripped = FALSE;
@@ -134,10 +134,15 @@ void check_faults(){
 	input_fault_tripped = rear_brake_press_fault_tripped || current_sensor_fault_tripped;
 
 	//bspd fault can only trip once and then it will be latched until power cycle
-	if((input_fault_tripped || TS_braking_fault_tripped) && bspd_fault_tripped == FALSE){
-		bspd_fault_tripped = TRUE;
+	if(!bspd_fault_tripped){
+		if(input_fault_tripped || TS_braking_fault_tripped){
+			bspd_timer = (bspd_timer <= BSPD_DELAY_ms) ? bspd_timer + 1 : BSPD_DELAY_ms + 1;
+			bspd_fault_tripped = (bspd_timer > BSPD_DELAY_ms) ? TRUE : FALSE;
+		}
+		else{
+			bspd_timer = 0;
+		}
 	}
-
 }
 
 void update_gcan_states() {
@@ -156,6 +161,10 @@ void update_gcan_states() {
 
 	//Current Sense:
 	update_and_queue_param_float(&currentSensor_A, getTractiveSystemCurrent());
+
+	//SDC Sense:
+	update_and_queue_param_u8(&sdcStatus8, HAL_GPIO_ReadPin(SDC_IN_SENSE_GPIO_Port, SDC_IN_SENSE_Pin));
+	update_and_queue_param_u8(&sdcStatus9, HAL_GPIO_ReadPin(SDC_OUT_SENSE_GPIO_Port, SDC_OUT_SENSE_Pin));
 }
 
 void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){

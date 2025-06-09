@@ -31,6 +31,7 @@
 #include "gopher_sense.h"
 #include "drs.h"
 #include "rvc.h"
+#include "pulse_sensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,6 +41,16 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define IC_TIMER &htim2
+#define HDMA_CHANNEL 1
+
+ //(X pulses / 1 sec) * (3600 sec / 1 hr) * (1 rev / 30 pulses) * ([wheel diameter * pi] in / 1 rev) * (1 mile/63360 in) =
+#define CONVERSION_RATIO 0.0595f
+#define DMA_STOPPED_TIMEOUT_MS 1000
+#define USE_VAR_SS true
+#define LOW_SAMPLES 100
+#define HIGH_SAMPLES 1000
+#define MIN_SAMPLES 5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -112,8 +123,33 @@ int main(void)
 #ifdef USING_PUMP_PWM
   init_Pump(&htim5,TIM_CHANNEL_2);
 #endif
-  init_DRS_servo(&htim1, TIM_CHANNEL_1);
+  init_DRS_servo(&htim3, TIM_CHANNEL_1);
   init_pullup_configs();
+  //this should be wheelSpeedRearLeft_mph.data
+//  setup_pulse_sensor_vss(
+//  		  &tim2,
+//   		  TIM_CHANNEL_1,
+//   		  IC_CONVERSION_RATIO,
+//   		  &(tcm_data.trans_speed),
+//  		  DMA_STOPPED_TIMEOUT_MS,
+//   		  USE_VAR_SS,
+//   		  IC_LOW_SAMPLES,
+//   		  IC_HIGH_SAMPLES,
+//  		  MIN_SAMPLES,
+//  		  64
+//     );
+  setup_pulse_sensor_vss(
+    		  &htim2,
+     		  TIM_CHANNEL_4,
+     		  CONVERSION_RATIO,
+     		  &(wheelSpeedRearRight_mph.data),
+    		  DMA_STOPPED_TIMEOUT_MS,
+     		  USE_VAR_SS,
+     		  LOW_SAMPLES,
+     		  HIGH_SAMPLES,
+    		  MIN_SAMPLES,
+    		  64
+       );
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
