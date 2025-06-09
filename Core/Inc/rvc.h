@@ -152,7 +152,7 @@
 #define RAD_FAN_ON (GPIO_PIN_SET)
 #define RAD_FAN_OFF (GPIO_PIN_RESET)
 #define PCB_BUZZ_ON (GPIO_PIN_SET)
-#define PCB_BUZZ_ON (GPIO_PIN_RESET)
+#define PCB_BUZZ_OFF (GPIO_PIN_RESET)
 // ==============================================================================================
 
 // ======================================= BSPD PARAMETERS ======================================

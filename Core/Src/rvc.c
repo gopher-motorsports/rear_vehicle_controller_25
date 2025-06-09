@@ -248,11 +248,11 @@ void update_brakelight_and_buzzer(){
 
 	if(vehicleState_state.data == VEHICLE_PREDRIVE) {
 		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_ON);
-		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, PCB_BUZZ_ON);
 		update_and_queue_param_u8(&vehicleBuzzerOn_state, TRUE);
 	} else {
 		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_OFF);
-		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, PCB_BUZZ_OFF);
 		update_and_queue_param_u8(&vehicleBuzzerOn_state, FALSE);
 	}
 	return;
