@@ -28,7 +28,7 @@ buckets:
                 samples_buffered: 1
             brakePressureRear_psi:
                 ADC: ADC1_IN4
-                sensor: brake_pressure_sensor
+                sensor: brake_pressure_sensor_rife
                 samples_buffered: 1
             currentSensorLow_A:
                 ADC: ADC1_IN8
