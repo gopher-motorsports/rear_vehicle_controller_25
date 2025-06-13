@@ -46,14 +46,14 @@ buckets:
                 ADC: ADC1_IN9
                 sensor: full_raw_voltage_sensor # TODO make ride height sensor in gophersense
                 samples_buffered: 1
-            # radWaterTempIn_C:
-            #     ADC: ADC1_IN11
-            #     sensor: temp_sensor
-            #     samples_buffered: 1
-            # radWaterTempOut_C:
-            #     ADC: ADC1_IN10
-            #     sensor: temp_sensor
-            #     samples_buffered: 1
+            radWaterTempIn_C:
+                ADC: ADC1_IN11
+                sensor: temp_sensor
+                samples_buffered: 1
+            radWaterTempOut_C:
+                ADC: ADC1_IN10
+                sensor: temp_sensor
+                samples_buffered: 1
             wheelSpeedRearLeft_mph: #pulse 2 = PE7 = MCU pin 38
                 ADC: NON_ADC
                 sensor: NON_ADC

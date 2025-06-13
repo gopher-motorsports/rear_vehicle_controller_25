@@ -92,20 +92,12 @@
 // ==============================================================================================
 
 // ====================================== COOLING PARAMETERS ====================================
-#define INVERTER_TEMP_THRESH_C    40.0f // Minimum Inverter temp threshold for cooling fan to turn on
-#define INVERTER_TEMP_THRESH_C_1  43.0f //Inverter temp threshold + HYS_ANALOG * 1
-#define INVERTER_TEMP_THRESH_C_2  46.0f //Inverter temp threshold + HYS_ANALOG * 2
-#define INVERTER_TEMP_THRESH_C_3  49.0f //Inverter temp threshold + HYS_ANALOG * 3
-#define INVERTER_TEMP_THRESH_C_4  52.0f //Inverter temp threshold + HYS_ANALOG * 4
+#define INVERTER_PUMP_THRESH_C    60.0f // Inverter temperature at which the cooling system turns on
+#define MOTOR_PUMP_THRESH_C       70.0f // Motor temperature at which the cooling system turns on
+#define INVERTER_FAN_THRESH_C    80.0f // Inverter temperature at which the cooling system turns on
+#define MOTOR_FAN_THRESH_C       90.0f // Motor temperature at which the cooling system turns on
 
-#define MOTOR_TEMP_THRESH_C       45.0f // Minimum Motor temperature for cooling fan to turn on
-#define MOTOR_TEMP_THRESH_C_1     48.0f //Motor temp threshold + HYS_ANALOG * 1
-#define MOTOR_TEMP_THRESH_C_2     51.0f //Motor temp threshold + HYS_ANALOG * 2
-#define MOTOR_TEMP_THRESH_C_3     54.0f //Motor temp threshold + HYS_ANALOG * 3
-#define MOTOR_TEMP_THRESH_C_4     57.0f //Motor temp threshold + HYS_ANALOG * 4
-
-#define HYSTERESIS_DIGITAL	      3.0f // Hysteresis when confined to digital signal (on/off)
-#define HYSTERESIS_ANALOG	      3.0f // Hysteresis when have PWM output signal (variable duty cycle)
+#define COOLING_HYSTERESIS_C      10.0f // Hysteresis when confined to digital signal (on/off)
 #define DRS_HYSTERESIS			  5.0f
 //#define USING_PUMP_PWM
 #define PUMP_INTENSITY_OFF		  0  //0% duty cycle --> 0/31999
@@ -114,8 +106,8 @@
 #define PUMP_INTENSITY_3		  24000 //75% duty cycle --> 24000/31999
 #define PUMP_INTENSITY_4		  31999 //100% duty cycle --> 31999/31999
 
-#define PUMP_DIGITAL_ON			  0
-#define PUMP_DIGITAL_OFF 		  1
+#define PUMP_DIGITAL_ON			  GPIO_PIN_SET
+#define PUMP_DIGITAL_OFF 		  GPIO_PIN_RESET
 // ==============================================================================================
 
 // =============================== SENSOR OVERCURRENT PARAMETERS ================================

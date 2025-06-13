@@ -175,65 +175,21 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 
 void update_cooling() {
 
-    double temp_readings[] = {ControllerTemp_C.data, motorTemp_C.data};
-	static double cooling_thresholds[] = {INVERTER_TEMP_THRESH_C, MOTOR_TEMP_THRESH_C};
-	static int total_cooling_thresholds = sizeof(cooling_thresholds) / sizeof(cooling_thresholds[0]); //amount of cooling thresholds
-
-
-	//rad fan cooling
-	for(int i = 0; i < total_cooling_thresholds; i++){
-		if(rad_fan_state == RAD_FAN_OFF && (temp_readings[i] >= (cooling_thresholds[i] + HYSTERESIS_DIGITAL))){
-			rad_fan_state = RAD_FAN_ON;
-
-			//set both controller and motortemp to unstable if either are too high(for ease of implementation)
-			for(int j = 0; j < total_cooling_thresholds; j++)
-				steady_temperatures_achieved_fan[j] = false;
-
-			fan_readings_below_HYS_threshold = 0;
-
-			break; //if an early temperature trips it, no need to check the rest of them
-		}
-
-		else if(rad_fan_state == RAD_FAN_ON){
-			if(steady_temperatures_achieved_fan[i] == false && (temp_readings[i] <= (cooling_thresholds[i] - HYSTERESIS_DIGITAL))){
-				fan_readings_below_HYS_threshold++;
-				steady_temperatures_achieved_fan[i] = true;
-			}
-
-			if(fan_readings_below_HYS_threshold == total_cooling_thresholds)
-				rad_fan_state = RAD_FAN_OFF;
-		}
+	if (ControllerTemp_C.data > INVERTER_PUMP_THRESH_C || motorTemp_C.data > MOTOR_PUMP_THRESH_C) {
+		digital_pump_state = PUMP_DIGITAL_ON;
+	} else if (ControllerTemp_C.data < INVERTER_PUMP_THRESH_C - COOLING_HYSTERESIS_C && motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C) {
+		digital_pump_state = PUMP_DIGITAL_OFF;
 	}
 
 
-	for(int i = 0; i < total_cooling_thresholds; i++){
-			if(digital_pump_state == PUMP_DIGITAL_OFF && (temp_readings[i] >= (cooling_thresholds[i] + HYSTERESIS_DIGITAL))){
-				digital_pump_state = PUMP_DIGITAL_ON;
+	if (ControllerTemp_C.data > INVERTER_FAN_THRESH_C || motorTemp_C.data > MOTOR_FAN_THRESH_C) {
+		rad_fan_state = RAD_FAN_ON;
+	} else if (ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C && motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C) {
+		rad_fan_state = RAD_FAN_OFF;
+	}
 
-				//set both controller and motortemp to unstable if either are too high(for ease of implementation)
-				for(int j = 0; j < total_cooling_thresholds; j++)
-					steady_temperatures_achieved_pump[j] = false;
-				pump_readings_below_HYS_threshold = 0;
-
-				break; //if an early temperature trips it, no need to check the rest of them
-			}
-
-			else if(digital_pump_state == PUMP_DIGITAL_ON){
-				if(steady_temperatures_achieved_pump[i] == false && (temp_readings[i] <= (cooling_thresholds[i] - HYSTERESIS_DIGITAL))){
-					pump_readings_below_HYS_threshold++;
-					steady_temperatures_achieved_pump[i] = true;
-				}
-
-				if(pump_readings_below_HYS_threshold == total_cooling_thresholds)
-					digital_pump_state = PUMP_DIGITAL_OFF;
-			}
-		}
-
-	//if we are not moving don't run the fans, otherwise apply the normal temperature thresholds
-	if(isVehicleMoving())
-		HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, PUMP_DIGITAL_OFF);
-	else
-		HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, digital_pump_state);
+	HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, digital_pump_state);
+	// TODO: Tell the PLM to shut the rad fan off/turn it on
 
 }
 
