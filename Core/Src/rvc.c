@@ -58,6 +58,9 @@ U16 pwm_pump_intensity = PUMP_INTENSITY_OFF;
 
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
+// Shut Down Circuit Sensing
+uint8_t shutDownBreakPoint = 0;
+
 #define HBEAT_LED_DELAY_TIME_ms 500
 
 // Initialization code goes here
@@ -77,6 +80,7 @@ void main_loop() {
 	update_brakeBias();
 
     set_DRS_Servo_Position(FALSE); //DRS set position
+	shutDownCircuitStatus();
 }
 
 /**
@@ -303,4 +307,25 @@ float getTractiveSystemCurrent(){
     }
 
     return tractiveSystemCurrent;
+}
+
+void shutDownCircuitStatus(){
+	if(0) {
+		// 2. PLM.9 -> Inertial Switch.1 ~ PLM
+		shutDownBreakPoint = 2;
+	} else if(0) {
+		// 3. Inertial Switch.2 -> BOT.1 ~ FVC.7
+		shutDownBreakPoint = 3;
+	} else if(sdcStatus17.data == 1){
+		// charger board 17
+		shutDownBreakPoint = 17;
+	} else if(0){
+		// charger board 18
+		shutDownBreakPoint = 18;
+	} else if(0){
+		// charger board 19
+		shutDownBreakPoint = 19;
+	}
+	update_and_queue_param_u8(&sdcBreakPoint, shutDownBreakPoint);
+
 }

@@ -244,4 +244,5 @@ void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
 void init_pullup_configs();
 float getTractiveSystemCurrent();
+void shutDownCircuitStatus();
 #endif /* INC_RVC_H_ */
