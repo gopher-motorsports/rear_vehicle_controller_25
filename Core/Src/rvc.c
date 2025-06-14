@@ -313,17 +313,56 @@ void shutDownCircuitStatus(){
 	if(0) {
 		// 2. PLM.9 -> Inertial Switch.1 ~ PLM
 		shutDownBreakPoint = 2;
-	} else if(0) {
+	} else if(sdcStatus3.data == 1) {
 		// 3. Inertial Switch.2 -> BOT.1 ~ FVC.7
 		shutDownBreakPoint = 3;
+	} else if(sdcStatus4.data == 1) {
+		// 4. BOT.1 -> Dash.2 ~ FVC.8
+		shutDownBreakPoint = 4;
+	} else if(0) {
+		// 5. Dash.3 -> Estop_R.1 ~ PLM.20
+		shutDownBreakPoint = 5;
+	} else if(0) {
+		// 6. Estop_R.2 -> Estop_L.1 ~ PLM.21
+		shutDownBreakPoint = 6;
+	} else if(0) {
+		// 7. Estop_L.2 -> Inverter_Relay.3 ~ PLM.22
+		shutDownBreakPoint = 7;
+	} else if(sdcStatus8.data == 1) {
+		// 8. Inverter_Relay.4 -> RVC.6 (BSPD) ~ RVC internal sensing
+		shutDownBreakPoint = 8;
+	} else if(sdcStatus9.data == 1) {
+		// 9. RVC.7 -> BMS_LV.9 ~ RVC internal/BMS internal
+		shutDownBreakPoint = 9;
+	} else if(0) {
+		// 10. BMS_LV.20 -> IO_Panel.1 (TSMS) ~ BMS Internal
+		shutDownBreakPoint = 10;
+	} else if(0) {
+		// 11. IO_Panel.2 (or Charger_SDC_Relay.4) -> TSMP(interlock).2 ~ BMS.9
+		shutDownBreakPoint = 11;
+	} else if(0){
+		// 12. TMSP(interlock).1 -> EMeter(interlock).6 ~ BMS.10
+		shutDownBreakPoint = 12;
+	} else if(0){
+		// 13. Emeter(interlock).5 -> TVIM_Interlock.2  ~ BMS.11
+		shutDownBreakPoint = 13;
+	} else if(0){
+		// 14. TVIM_Interlock.1 -> MSD_Interlock.1 ~ BMS.12
+		shutDownBreakPoint = 14;
+	} else if(0){
+		// 15. MSD_Interlock.2 -> HV_Interlock.2 ~ BMS.13
+		shutDownBreakPoint = 15;
+	} else if(0){
+		// 16. HV_Interlock.1 -> TVIM_LV.1 (and AIR_Neg_CTRL.1) ~ BMS.14
+		shutDownBreakPoint = 16;
 	} else if(sdcStatus17.data == 1){
-		// charger board 17
+		// 17. *IO_Panel.1 (TSMS) -> *SDC_Switch.3 - only when charger board connected
 		shutDownBreakPoint = 17;
 	} else if(0){
-		// charger board 18
+		// 18.  SDC_Switch.2 -> (charger)Estop.1 - only when charger board connected
 		shutDownBreakPoint = 18;
 	} else if(0){
-		// charger board 19
+		// 19. (charger)Estop.2 -> Charger_SDC_Relay.3 - only when charger board connected
 		shutDownBreakPoint = 19;
 	}
 	update_and_queue_param_u8(&sdcBreakPoint, shutDownBreakPoint);
