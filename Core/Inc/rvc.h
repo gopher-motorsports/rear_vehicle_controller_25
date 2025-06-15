@@ -129,7 +129,7 @@
 #define WHEEL_DIAMETER_IN       10     // Wheel diameter
 #define MOTOR_POLE_PAIRS   		10 	   // Amount of Pole Pairs of the EMRAX Motor
 #define BSPD_POWER_LIMIT		4000   // 5 kW limit before a car shutdown is required, 4 kW with buffer
-#define DRIVE_RATIO				0.00123 //erpm of motor to mph of the car
+#define DRIVE_RATIO				0.0255754 //erpm of motor to mph of the car
 // ==============================================================================================
 
 // ================================== TRACTIVE SYSTEM PARAMETERS 2024 ================================
