@@ -59,6 +59,7 @@ U8 pump_readings_below_HYS_threshold = 0;
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
 #define HBEAT_LED_DELAY_TIME_ms 500
+#define TSSI_RED_BLINK_TIME_ms 333 //corresponds to 3 Hz
 
 // Initialization code goes here
 void init(CAN_HandleTypeDef* hcan_ptr) {
@@ -275,13 +276,17 @@ void LED_task(){
 }
 
 void update_TSSI_LED(){
-	if(/*imdFault_state.data ||*/ bspdFault_state.data){
+	static U32 last_red_blink = 0;
+	if(imdFault_state.data || amsFault_state.data){
+		if(HAL_GetTick() - last_red_blink > TSSI_RED_BLINK_TIME_ms){
+			HAL_GPIO_TogglePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin);
+			last_red_blink = HAL_GetTick();
+		}
 		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 0);
-		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 1);
 	}
 	else{
-		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
 		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 0);
+		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
 	}
 }
 
