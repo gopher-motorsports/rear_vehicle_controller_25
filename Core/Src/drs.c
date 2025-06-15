@@ -42,7 +42,7 @@ void init_DRS_servo(TIM_HandleTypeDef* timer_address, U32 channel){
 void set_DRS_Servo_Position(U8 start_up_condition){
 	//duty cycle lookup table for each DRS position, optional if we are using the rotary dial
 
-	drs_button_state = swButon0_state.data; //place holder button
+	drs_button_state = swButon2_state.data;
 	if(start_up_condition){
 			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
 	}
