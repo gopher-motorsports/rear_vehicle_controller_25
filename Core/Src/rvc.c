@@ -207,6 +207,8 @@ void update_cooling() {
 		switch (pump_state) {
 			case PUMP_STATE_OFF:
 				pump_decimal = 0;
+				pump_decimal = 1 - pump_decimal; //complement cause nmos 1 = ground
+
 				pump_percent = 0;
 
 				__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, pump_decimal * PUMP_COUNTER_PERIOD);
@@ -228,6 +230,7 @@ void update_cooling() {
 
 				pump_decimal = 0.5 * additional_power_decimal + PUMP_PERCENT_OFFSET;
 				pump_percent = pump_decimal * 100;
+				pump_decimal = 1 - pump_decimal; //complement cause nmos 1 = ground
 
 				__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, pump_decimal * PUMP_COUNTER_PERIOD);
 				if (inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) {

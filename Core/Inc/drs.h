@@ -33,8 +33,8 @@
 #define DRS_POS_15 23749
 #define DRS_POS_16 24999
 
-#define OPEN_POS 18959 //63.2% duty cycle
-#define CLOSED_POS 25660 //86.4% duty cycle
+#define OPEN_POS 19232 //63.2% duty cycle
+#define CLOSED_POS 26291 //86.4% duty cycle out of 30430
 #define DRS_SHUTDOWN_CHECKS
 
 //constants for smart shutoff when cornering
