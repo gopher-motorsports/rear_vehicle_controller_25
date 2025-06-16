@@ -26,7 +26,7 @@
 
 // ========================================== PWM CONSTANTS =========================================
 #define TIM2_PWM_MAX	1600 //value where max overflow happens, defined in IOC in timer config
-
+#define DRS_HYSTERESIS			  5.0f
 // ======================================= APPS PARAMETERS ======================================
 #define APPS_MAX_TORQUE_POS_mm  21.5f // The position of the pedal at 100% torque
 #define APPS_MIN_TORQUE_POS_mm  2.5f  // The position of the pedal at 0% torque
@@ -94,19 +94,22 @@
 // ==============================================================================================
 
 // ====================================== COOLING PARAMETERS ====================================
-#define INVERTER_PUMP_THRESH_C    60.0f // Inverter temperature at which the cooling system turns on
+#define INVERTER_PUMP_POWER_ON_THRESH 35.0f //Low Threshold Turn On
+#define INVERTER_PUMP_POWER_MAX_THRESH 45.0f	//High Threshold Turn on
 #define MOTOR_PUMP_THRESH_C       70.0f // Motor temperature at which the cooling system turns on
-#define INVERTER_FAN_THRESH_C    80.0f // Inverter temperature at which the cooling system turns on
-#define MOTOR_FAN_THRESH_C       90.0f // Motor temperature at which the cooling system turns on
 
-#define COOLING_HYSTERESIS_C      10.0f // Hysteresis when confined to digital signal (on/off)
-#define DRS_HYSTERESIS			  5.0f
-//#define USING_PUMP_PWM
-#define PUMP_INTENSITY_OFF		  0  //0% duty cycle --> 0/31999
-#define PUMP_INTENSITY_1		  8000 //25% duty cycle --> 8000/31999
-#define PUMP_INTENSITY_2		  16000 //50% duty cycle --> 16000/31999
-#define PUMP_INTENSITY_3		  24000 //75% duty cycle --> 24000/31999
-#define PUMP_INTENSITY_4		  31999 //100% duty cycle --> 31999/31999
+#define INVERTER_FAN_THRESH_C    45.0f // Inverter temperature at which the cooling system turns on
+#define MOTOR_FAN_THRESH_C       90.0f // Motor temperature at which the cooling system turns on
+#define COOLING_HYSTERESIS_C      5.0f // Hysteresis when confined to digital signal (on/off)
+#define CAR_SPEED_FAN_HYS	      5.0f // Hysteresis on Car speed for turning on/off fans
+#define CAR_SPEED_FAN_THRESH	  20.0f // Car speed at which air cooling from movement is enough
+#define USING_PUMP_PWM
+#define PUMP_OFF		  0  //0% duty cycle --> 0/49999
+#define PUMP_50_PERCENT  25000 //50% duty cycle --> 25000/49999
+#define PUMP_100_PERCENT 49999 //100% duty cycle --> 49999/49999
+#define PUMP_COUNTER_PERIOD	49999
+#define PUMP_PERCENT_OFFSET 0.5f //if the pump is on it will statr at 50%
+
 
 #define PUMP_DIGITAL_ON			  GPIO_PIN_SET
 #define PUMP_DIGITAL_OFF 		  GPIO_PIN_RESET
@@ -128,7 +131,7 @@
 #define WHEEL_DIAMETER_IN       10     // Wheel diameter
 #define MOTOR_POLE_PAIRS   		10 	   // Amount of Pole Pairs of the EMRAX Motor
 #define BSPD_POWER_LIMIT		4000   // 5 kW limit before a car shutdown is required, 4 kW with buffer
-
+#define DRIVE_RATIO				0.0255754 //erpm of motor to mph of the car
 // ==============================================================================================
 
 // ================================== TRACTIVE SYSTEM PARAMETERS 2024 ================================
@@ -220,6 +223,15 @@ typedef enum {
 	INVERTER_FAULT
 } DISPLAY_FAULT_STATUS_t;
 
+typedef enum {
+    PUMP_STATE_OFF,
+    PUMP_STATE_ON,
+} PUMP_STATE;
+
+typedef enum {
+    FAN_STATE_OFF,
+    FAN_STATE_ON
+} FAN_STATE;
 
 
 void init(CAN_HandleTypeDef* hcan_ptr);
