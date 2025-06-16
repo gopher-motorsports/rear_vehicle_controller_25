@@ -62,6 +62,8 @@
 #define PREDRIVE_TIME_ms           2000 // The length of predrive in ms
 #define RTD_BUTTON_PUSHED          (GPIO_PIN_RESET)
 #define TS_ON_THRESHOLD_VOLTAGE_V  190
+#define TSSI_FLASH_PERIOD_ms       300
+#define TSSI_RESET_TIME_ms         12000
 // ==============================================================================================
 
 

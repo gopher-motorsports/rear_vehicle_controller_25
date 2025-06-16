@@ -225,9 +225,9 @@ void LED_task(){
 }
 
 void update_TSSI_LED(){
-	if(/*imdFault_state.data ||*/ bspdFault_state.data){
+	if(HAL_GetTick() > TSSI_RESET_TIME_ms && (imdFault_state.data && amsFault_state.data)) {
 		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 0);
-		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 1);
+		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, (HAL_GetTick() % TSSI_FLASH_PERIOD_ms) < TSSI_FLASH_PERIOD_ms / 2);
 	}
 	else{
 		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
