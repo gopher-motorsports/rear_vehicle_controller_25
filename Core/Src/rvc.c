@@ -174,23 +174,37 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 	HAL_TIM_PWM_Start(PUMP_PWM_Timer, PUMP_Channel); //turn on PWM generation
 }
 
+float inv_temp = 0;
+float motor_temp = 0;
 void update_cooling() {
 	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
 	float inv_temp = ControllerTemp_C.data;
 
-	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motorTemp_C.data > MOTOR_PUMP_THRESH_C)) {
+//	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motorTemp_C.data > MOTOR_PUMP_THRESH_C)) {
+//			digital_pump_state = PUMP_DIGITAL_ON;
+//	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+//			digital_pump_state = PUMP_DIGITAL_OFF;
+//	}
+//
+//	//radiator fan
+//	if ((ControllerTemp_C.data > INVERTER_FAN_THRESH_C) || (motorTemp_C.data > MOTOR_FAN_THRESH_C)) {
+//			rad_fan_state = RAD_FAN_ON;
+//	} else if ((ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+//			rad_fan_state = RAD_FAN_OFF;
+//	}
+
+	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C)) {
 			digital_pump_state = PUMP_DIGITAL_ON;
-	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
 			digital_pump_state = PUMP_DIGITAL_OFF;
 	}
 
 	//radiator fan
-	if ((ControllerTemp_C.data > INVERTER_FAN_THRESH_C) || (motorTemp_C.data > MOTOR_FAN_THRESH_C)) {
+	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C)) {
 			rad_fan_state = RAD_FAN_ON;
-	} else if ((ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
 			rad_fan_state = RAD_FAN_OFF;
 	}
-
 	HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, digital_pump_state);
 }
 
@@ -205,10 +219,12 @@ void update_brakelight_and_buzzer(){
 
 	if(vehicleState_state.data == VEHICLE_PREDRIVE) {
 		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_ON);
+		//HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, buzzer_state);
 		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, PCB_BUZZ_ON);
 		update_and_queue_param_u8(&vehicleBuzzerOn_state, TRUE);
 	} else {
 		HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, MOSFET_PULL_DOWN_OFF);
+		//HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, buzzer_state);
 		HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, PCB_BUZZ_OFF);
 		update_and_queue_param_u8(&vehicleBuzzerOn_state, FALSE);
 	}
