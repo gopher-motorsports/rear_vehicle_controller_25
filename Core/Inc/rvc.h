@@ -94,11 +94,11 @@
 // ==============================================================================================
 
 // ====================================== COOLING PARAMETERS ====================================
-#define INVERTER_PUMP_POWER_ON_THRESH 35.0f //Low Threshold Turn On
+#define INVERTER_PUMP_POWER_ON_THRESH 45.0f //Low Threshold Turn On
 #define MOTOR_PUMP_THRESH_C       45.0f // Motor temperature at which the cooling system turns on
 
-#define INVERTER_FAN_THRESH_C    35.0f // Inverter temperature at which the cooling system turns on
-#define MOTOR_FAN_THRESH_C       45.0f // Motor temperature at which the cooling system turns on
+#define INVERTER_FAN_THRESH_C    50.0f // Inverter temperature at which the cooling system turns on
+#define MOTOR_FAN_THRESH_C       50.0f // Motor temperature at which the cooling system turns on
 #define COOLING_HYSTERESIS_C      5.0f // Hysteresis when confined to digital signal (on/off)
 #define CAR_SPEED_FAN_HYS	      5.0f // Hysteresis on Car speed for turning on/off fans
 #define CAR_SPEED_FAN_THRESH	  20.0f // Car speed at which air cooling from movement is enough
@@ -110,8 +110,8 @@
 #define PUMP_PERCENT_OFFSET 0.5f //if the pump is on it will statr at 50%
 
 
-#define PUMP_DIGITAL_ON			  GPIO_PIN_SET
-#define PUMP_DIGITAL_OFF 		  GPIO_PIN_RESET
+#define PUMP_DIGITAL_ON			  GPIO_PIN_RESET
+#define PUMP_DIGITAL_OFF 		  GPIO_PIN_SET
 // ==============================================================================================
 
 // =============================== SENSOR OVERCURRENT PARAMETERS ================================

@@ -177,17 +177,18 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 void update_cooling() {
 	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
 	float inv_temp = ControllerTemp_C.data;
+	float motor_temp = motorTemp_C.data;
 
-	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motorTemp_C.data > MOTOR_PUMP_THRESH_C)) {
+	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C)) {
 			digital_pump_state = PUMP_DIGITAL_ON;
-	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
 			digital_pump_state = PUMP_DIGITAL_OFF;
 	}
 
 	//radiator fan
-	if ((ControllerTemp_C.data > INVERTER_FAN_THRESH_C) || (motorTemp_C.data > MOTOR_FAN_THRESH_C)) {
+	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C)) {
 			rad_fan_state = RAD_FAN_ON;
-	} else if ((ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
 			rad_fan_state = RAD_FAN_OFF;
 	}
 
