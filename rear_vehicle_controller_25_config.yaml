@@ -6,33 +6,9 @@ buckets:
     high_frequency_ADCs:
         frequency_hz: 250
         parameters:
-            currentSensorHigh_A:
-                ADC: ADC1_IN3
-                sensor: current_sensor_2
-                samples_buffered: 1
-            brakeTempRearLeft_C: #Volt Sense 1
-                ADC: ADC1_IN15
-                sensor: brake_temp_sensor
-                samples_buffered: 1
-            brakeTempRearRight_C: #Volt Sense 2
-                ADC: ADC1_IN6
-                sensor: brake_temp_sensor
-                samples_buffered: 1
-            shockPosRearLeft_mm: #Volt Sense 3
-                ADC: ADC1_IN0
-                sensor: linear_pos_sensor_50
-                samples_buffered: 1
-            shockPosRearRight_mm: #Volt Sense 4
-                ADC: ADC1_IN5
-                sensor: linear_pos_sensor_50
-                samples_buffered: 1
             brakePressureRear_psi:
                 ADC: ADC1_IN4
                 sensor: brake_pressure_sensor_rife
-                samples_buffered: 1
-            currentSensorLow_A:
-                ADC: ADC1_IN8
-                sensor: current_sensor_1
                 samples_buffered: 1
             currentSensor_A:
                 ADC: NON_ADC
@@ -42,25 +18,9 @@ buckets:
                 ADC: NON_ADC
                 sensor: NON_ADC
                 samples_buffered: 1
-            rearRideHeight_mm:
-                ADC: ADC1_IN9
-                sensor: full_raw_voltage_sensor # TODO make ride height sensor in gophersense
-                samples_buffered: 1
             radWaterTempIn_C:
                 ADC: ADC1_IN11
                 sensor: temp_sensor
-                samples_buffered: 1
-            radWaterTempOut_C:
-                ADC: ADC1_IN10
-                sensor: temp_sensor
-                samples_buffered: 1
-            wheelSpeedRearLeft_mph: #pulse 2 = PE7 = MCU pin 38
-                ADC: NON_ADC
-                sensor: NON_ADC
-                samples_buffered: 1
-            wheelSpeedRearRight_mph: #pulse 3 = PB2 = MCU pin 37
-                ADC: NON_ADC
-                sensor: NON_ADC
                 samples_buffered: 1
 
     low_frequency:
@@ -114,6 +74,47 @@ buckets:
                 sensor: NON_ADC
                 samples_buffered: 1
             vehicleBuzzerOn_state:
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            
+            brakeTempRearLeft_C: #Volt Sense 1
+                ADC: ADC1_IN15
+                sensor: brake_temp_sensor
+                samples_buffered: 1
+            brakeTempRearRight_C: #Volt Sense 2
+                ADC: ADC1_IN6
+                sensor: brake_temp_sensor
+                samples_buffered: 1
+            shockPosRearLeft_mm: #Volt Sense 3
+                ADC: ADC1_IN0
+                sensor: linear_pos_sensor_50
+                samples_buffered: 1
+            shockPosRearRight_mm: #Volt Sense 4
+                ADC: ADC1_IN5
+                sensor: linear_pos_sensor_50
+                samples_buffered: 1
+            rearRideHeight_mm:
+                ADC: ADC1_IN9
+                sensor: full_raw_voltage_sensor # TODO make ride height sensor in gophersense
+                samples_buffered: 1
+            radWaterTempOut_C:
+                ADC: ADC1_IN10
+                sensor: temp_sensor
+                samples_buffered: 1
+            currentSensorLow_A:
+                ADC: ADC1_IN8
+                sensor: current_sensor_1
+                samples_buffered: 1
+            currentSensorHigh_A:
+                ADC: ADC1_IN3
+                sensor: current_sensor_2
+                samples_buffered: 1
+            wheelSpeedRearLeft_mph: #pulse 2 = PE7 = MCU pin 38
+                ADC: NON_ADC
+                sensor: NON_ADC
+                samples_buffered: 1
+            wheelSpeedRearRight_mph: #pulse 3 = PB2 = MCU pin 37
                 ADC: NON_ADC
                 sensor: NON_ADC
                 samples_buffered: 1

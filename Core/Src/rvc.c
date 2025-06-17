@@ -158,7 +158,7 @@ void update_gcan_states() {
 
 	// Cooling
 	update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
-	update_and_queue_param_u8(&coolantPumpPower_percent, pump_percent);
+	update_and_queue_param_u8(&coolantPumpPower_percent, digital_pump_state * 100);
 
 	//Current Sense:
 	update_and_queue_param_float(&currentSensor_A, getTractiveSystemCurrent());
@@ -175,76 +175,23 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 }
 
 void update_cooling() {
-	motor_rpm = electricalRPM_erpm.data * DRIVE_RATIO;
+	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
 	float inv_temp = ControllerTemp_C.data;
-	static PUMP_STATE pump_state = PUMP_STATE_OFF;
 
-//	switch (pump_state) {
-//		case PUMP_STATE_OFF:
-//			__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, PUMP_OFF);
-//			if (inv_temp > INVERTER_LOW_POWER_THRESH) {
-//				pump_state = PUMP_STATE_LOW;
-//			}
-//
-//			break;
-//		case PUMP_STATE_LOW:
-//			//10 degrees maps to 50-100 which is 0-50 with 50 offset
-//			__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, PUMP_50_PERCENT);
-//			if (inv_temp > INVERTER_HIGH_POWER_THRESH) {
-//				pump_state = PUMP_STATE_HIGH;
-//			} else if (inv_temp < INVERTER_LOW_POWER_THRESH - COOLING_HYSTERESIS_C) {
-//				pump_state = PUMP_STATE_OFF;
-//			}
-//			break;
-//
-//		case PUMP_STATE_HIGH:
-//			__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, PUMP_100_PERCENT);
-//			if (inv_temp < INVERTER_HIGH_POWER_THRESH - COOLING_HYSTERESIS_C) {
-//				pump_state = PUMP_STATE_LOW;
-//			}
-//			break;
-//	    }
-		switch (pump_state) {
-			case PUMP_STATE_OFF:
-				pump_decimal = 0;
-				pump_decimal = 1 - pump_decimal; //complement cause nmos 1 = ground
-
-				pump_percent = 0;
-
-				__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, pump_decimal * PUMP_COUNTER_PERIOD);
-				if (inv_temp > INVERTER_PUMP_POWER_ON_THRESH) {
-					pump_state = PUMP_STATE_ON;
-				}
-
-				break;
-			case PUMP_STATE_ON:
-				// base percent when on = 50%, linear interpolate from min turn on to max threshold of 45 to get pump power
-				// y = mx + b on graph of pump percentage as y and temp being x
-				// point 1: (35 degrees, current inverter temp), point 2: (45 degrees, 1)
-				float temp_span = INVERTER_PUMP_POWER_MAX_THRESH - INVERTER_PUMP_POWER_ON_THRESH;
-				float additional_power_decimal = (inv_temp - INVERTER_PUMP_POWER_ON_THRESH) / temp_span;
-
-				// Clamp to [0, 1] percentage
-				if (additional_power_decimal < 0) additional_power_decimal = 0;
-				if (additional_power_decimal > 1) additional_power_decimal = 1;
-
-				pump_decimal = 0.5 * additional_power_decimal + PUMP_PERCENT_OFFSET;
-				pump_percent = pump_decimal * 100;
-				pump_decimal = 1 - pump_decimal; //complement cause nmos 1 = ground
-
-				__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, pump_decimal * PUMP_COUNTER_PERIOD);
-				if (inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) {
-					pump_state = PUMP_STATE_OFF;
-				}
-				break;
-		    }
+	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motorTemp_C.data > MOTOR_PUMP_THRESH_C)) {
+			digital_pump_state = PUMP_DIGITAL_ON;
+	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+			digital_pump_state = PUMP_DIGITAL_OFF;
+	}
 
 	//radiator fan
-	if ((inv_temp > INVERTER_FAN_THRESH_C) && (motor_rpm < CAR_SPEED_FAN_THRESH - CAR_SPEED_FAN_HYS))
-		rad_fan_state = RAD_FAN_ON;
-	else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) || (motor_rpm > CAR_SPEED_FAN_THRESH))
-		rad_fan_state = RAD_FAN_OFF;
+	if ((ControllerTemp_C.data > INVERTER_FAN_THRESH_C) || (motorTemp_C.data > MOTOR_FAN_THRESH_C)) {
+			rad_fan_state = RAD_FAN_ON;
+	} else if ((ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+			rad_fan_state = RAD_FAN_OFF;
+	}
 
+	HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, digital_pump_state);
 }
 
 void update_brakelight_and_buzzer(){
@@ -279,7 +226,7 @@ void LED_task(){
 }
 
 void update_TSSI_LED(){
-	if(HAL_GetTick() > TSSI_RESET_TIME_ms && (imdFault_state.data && amsFault_state.data)) {
+	if(HAL_GetTick() > TSSI_RESET_TIME_ms && (imdFault_state.data || amsFault_state.data)) {
 		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 0);
 		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, (HAL_GetTick() % TSSI_FLASH_PERIOD_ms) < TSSI_FLASH_PERIOD_ms / 2);
 	}

@@ -60,10 +60,10 @@ void MX_GPIO_Init(void)
                           |PULLUP_GATE_6_Pin|PULLUP_GATE_5_Pin|GSENSE_LED_Pin|MCU_STATUS_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, TSSI_RED_Pin|TSSI_GREEN_Pin|AUX_GPIO_2_Pin|AUX_GPIO_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, PUMP_OUTPUT_Pin|PCB_BUZZER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(PCB_BUZZER_GPIO_Port, PCB_BUZZER_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, TSSI_RED_Pin|TSSI_GREEN_Pin|AUX_GPIO_2_Pin|AUX_GPIO_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(HARDFAULT_LED_GPIO_Port, HARDFAULT_LED_Pin, GPIO_PIN_RESET);
@@ -98,6 +98,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(RTD_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PUMP_OUTPUT_Pin PCB_BUZZER_Pin */
+  GPIO_InitStruct.Pin = PUMP_OUTPUT_Pin|PCB_BUZZER_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pin : TH_SDA_Pin */
   GPIO_InitStruct.Pin = TH_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
@@ -126,13 +133,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PCB_BUZZER_Pin */
-  GPIO_InitStruct.Pin = PCB_BUZZER_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(PCB_BUZZER_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : CURR_FAULT_5V_Pin CURR_FAULT_5V_2_Pin BSPD_TS_SNS_FAULT_Pin BSPD_TS_BRK_FAULT_Pin
                            BSPD_BRK_FAULT_Pin */
