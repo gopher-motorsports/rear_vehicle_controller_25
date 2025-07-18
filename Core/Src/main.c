@@ -115,13 +115,12 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM10_Init();
   MX_USART1_UART_Init();
-  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
 
   init(&hcan2);
   gsense_init(&hcan2, &hadc1, NULL, NULL, &htim10, GSENSE_LED_GPIO_Port, GSENSE_LED_Pin);
 #ifdef USING_PUMP_PWM
-  init_Pump(&htim5,TIM_CHANNEL_2);
+  init_Pump(&htim8,TIM_CHANNEL_3);
 #endif
   init_DRS_servo(&htim3, TIM_CHANNEL_1);
   init_pullup_configs();

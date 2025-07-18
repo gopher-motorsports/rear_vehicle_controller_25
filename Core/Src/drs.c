@@ -42,28 +42,35 @@ void init_DRS_servo(TIM_HandleTypeDef* timer_address, U32 channel){
 void set_DRS_Servo_Position(U8 start_up_condition){
 	//duty cycle lookup table for each DRS position, optional if we are using the rotary dial
 
-	drs_button_state = swButon0_state.data; //place holder button
-	if(start_up_condition){
-			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
+	drs_button_state = swButon2_state.data;
+//	if(start_up_condition){
+//			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
+//	}
+//	else{
+//		if(drs_button_state == 1){
+//#ifdef DRS_SHUTDOWN_CHECKS
+//			if(drs_shutoff_conditions_reached()){
+//				__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, CLOSED_POS);
+//			}
+//			else{
+//			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
+//			}
+//#else
+//			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
+//#endif
+//
+//		}
+//		else{
+//			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, CLOSED_POS);
+//		}
+//
+//	}
+
+	if(drs_button_state == 1){
+		__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
 	}
 	else{
-		if(drs_button_state == 1){
-#ifdef DRS_SHUTDOWN_CHECKS
-			if(drs_shutoff_conditions_reached()){
-				__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, CLOSED_POS);
-			}
-			else{
-			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
-			}
-#else
-			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, OPEN_POS);
-#endif
-
-		}
-		else{
-			__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, CLOSED_POS);
-		}
-
+		__HAL_TIM_SET_COMPARE(DRS_Timer, DRS_Channel, CLOSED_POS);
 	}
 }
 

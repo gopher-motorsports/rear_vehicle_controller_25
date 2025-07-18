@@ -34,6 +34,7 @@ boolean bspd_fault_tripped = FALSE;
 
 //Motor Variables
 float motor_rpm = 0;
+float pump_decimal;
 uint8_t rear_brake_hardware_fault_active = 0;
 uint8_t current_hardware_range_fault_active = 0;
 uint8_t TS_braking_hardware_fault_active = 0;
@@ -51,10 +52,9 @@ U8 rad_fan_state = RAD_FAN_OFF;
 //Pump
 TIM_HandleTypeDef* PUMP_PWM_Timer;
 U32 PUMP_Channel;
-
+float pump_percent;
 boolean steady_temperatures_achieved_pump[] = {true, true}; //LOT if pump temperatures have returned to ready state
 U8 pump_readings_below_HYS_threshold = 0;
-U16 pwm_pump_intensity = PUMP_INTENSITY_OFF;
 
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
@@ -62,6 +62,7 @@ U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 uint8_t shutDownBreakPoint = 0;
 
 #define HBEAT_LED_DELAY_TIME_ms 500
+#define TSSI_RED_BLINK_TIME_ms 333 //corresponds to 3 Hz
 
 // Initialization code goes here
 void init(CAN_HandleTypeDef* hcan_ptr) {
@@ -161,7 +162,7 @@ void update_gcan_states() {
 
 	// Cooling
 	update_and_queue_param_u8(&coolantFanPower_percent, rad_fan_state*100);
-	update_and_queue_param_u8(&coolantPumpPower_percent, digital_pump_state*100);
+	update_and_queue_param_u8(&coolantPumpPower_percent, digital_pump_state * 100);
 
 	//Current Sense:
 	update_and_queue_param_float(&currentSensor_A, getTractiveSystemCurrent());
@@ -178,23 +179,24 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 }
 
 void update_cooling() {
+	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
+	float inv_temp = ControllerTemp_C.data;
+	float motor_temp = motorTemp_C.data;
 
-	if (ControllerTemp_C.data > INVERTER_PUMP_THRESH_C || motorTemp_C.data > MOTOR_PUMP_THRESH_C) {
-		digital_pump_state = PUMP_DIGITAL_ON;
-	} else if (ControllerTemp_C.data < INVERTER_PUMP_THRESH_C - COOLING_HYSTERESIS_C && motorTemp_C.data < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C) {
-		digital_pump_state = PUMP_DIGITAL_OFF;
+	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C)) {
+			digital_pump_state = PUMP_DIGITAL_ON;
+	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+			digital_pump_state = PUMP_DIGITAL_OFF;
 	}
 
-
-	if (ControllerTemp_C.data > INVERTER_FAN_THRESH_C || motorTemp_C.data > MOTOR_FAN_THRESH_C) {
-		rad_fan_state = RAD_FAN_ON;
-	} else if (ControllerTemp_C.data < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C && motorTemp_C.data < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C) {
-		rad_fan_state = RAD_FAN_OFF;
+	//radiator fan
+	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C)) {
+			rad_fan_state = RAD_FAN_ON;
+	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+			rad_fan_state = RAD_FAN_OFF;
 	}
 
 	HAL_GPIO_WritePin(PUMP_OUTPUT_GPIO_Port, PUMP_OUTPUT_Pin, digital_pump_state);
-	// TODO: Tell the PLM to shut the rad fan off/turn it on
-
 }
 
 void update_brakelight_and_buzzer(){
@@ -229,18 +231,17 @@ void LED_task(){
 }
 
 void update_TSSI_LED(){
-	if(/*imdFault_state.data ||*/ bspdFault_state.data){
+	if(HAL_GetTick() > TSSI_RESET_TIME_ms && (imdFault_state.data || amsFault_state.data)) {
 		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 0);
-		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 1);
+		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, (HAL_GetTick() % TSSI_FLASH_PERIOD_ms) < TSSI_FLASH_PERIOD_ms / 2);
 	}
 	else{
-		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
 		HAL_GPIO_WritePin(TSSI_RED_GPIO_Port, TSSI_RED_Pin, 0);
+		HAL_GPIO_WritePin(TSSI_GREEN_GPIO_Port, TSSI_GREEN_Pin, 1);
 	}
 }
 
 boolean isVehicleMoving(){
-	motor_rpm = electricalRPM_erpm.data / MOTOR_POLE_PAIRS; //equation for rpm from erpm
 	if (motor_rpm < 50){
 		return FALSE;
 	}
