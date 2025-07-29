@@ -176,8 +176,9 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 
 void update_cooling() {
 	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
-	float inv_temp = ControllerTemp_C.data;
-	float motor_temp = motorTemp_C.data;
+	float inv_temp = fvcControllerTemp_C.data;
+//	float inv_temp = 50.0;// not reading inverter params over can for some reason, but other modules can?
+	float motor_temp = fvcMotorTemp_C.data;
 
 	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C)) {
 			digital_pump_state = PUMP_DIGITAL_ON;
