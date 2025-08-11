@@ -312,6 +312,7 @@ float getTractiveSystemCurrent(){
 }
 
 void shutDownCircuitStatus() {
+	shutDownBreakPoint = 0;
 	for (uint8_t i = 0; i < SDC_NUM_BREAKPOINTS; i++)
 	{
 		if (*sdcStatusParams[i] == 1)
