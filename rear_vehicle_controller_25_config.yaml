@@ -83,7 +83,7 @@ buckets:
                 sensor: brake_temp_sensor
                 samples_buffered: 1
             brakeTempRearRight_C: #Volt Sense 2
-                ADC: ADC1_IN6
+                ADC: ADC1_IN5
                 sensor: brake_temp_sensor
                 samples_buffered: 1
             shockPosRearLeft_mm: #Volt Sense 3
@@ -91,7 +91,7 @@ buckets:
                 sensor: linear_pos_sensor_50
                 samples_buffered: 1
             shockPosRearRight_mm: #Volt Sense 4
-                ADC: ADC1_IN5
+                ADC: ADC1_IN6
                 sensor: linear_pos_sensor_50
                 samples_buffered: 1
             rearRideHeight_mm:
