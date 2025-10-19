@@ -35,6 +35,8 @@
 
 #define OPEN_POS 19232 //63.2% duty cycle
 #define CLOSED_POS 25000 //86.4% duty cycle out of 30430
+#define CLOSING_TIME 430//ms delay to let the drs go to a closed position
+#define OUT_OF_BOUNDS_POS 30430
 //#define DRS_SHUTDOWN_CHECKS
 
 //constants for smart shutoff when cornering
@@ -53,6 +55,13 @@ typedef enum
 	LEFT_LIMIT_BREACHED,
 	RIGHT_LIMIT_BREACHED
 } STEERING_ANGLE_STATE;
+
+typedef enum
+{
+	DRS_OPEN = 0,
+	DRS_FLOATING,
+	DRS_CLOSING
+}DRS_STATE_t;
 
 typedef struct {
     FLOAT_CAN_STRUCT* parameter;
