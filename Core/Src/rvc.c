@@ -43,6 +43,8 @@ uint8_t TS_braking_hardware_fault_active = 0;
 uint8_t currentSensorStatus = UNINITIALIZED;
 
 //Cooling variables
+uint32_t cooling_timer_pump = 0;
+uint32_t cooling_timer_fan = 0;
 
 //Fan
 boolean steady_temperatures_achieved_fan[] = {true, true}; //LOT if fan temperatures have returned to steady state, implemented to stop double counting
@@ -179,16 +181,18 @@ void update_cooling() {
 	float inv_temp = fvcControllerTemp_C.data;
 	float motor_temp = fvcMotorTemp_C.data;
 
-	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C)) {
+	if ((inv_temp > INVERTER_PUMP_POWER_ON_THRESH) || (motor_temp > MOTOR_PUMP_THRESH_C) || (swButon4_state.data)) {
 			digital_pump_state = PUMP_DIGITAL_ON;
-	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)) {
+			cooling_timer_pump = HAL_GetTick();
+	} else if ((inv_temp < INVERTER_PUMP_POWER_ON_THRESH - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_PUMP_THRESH_C - COOLING_HYSTERESIS_C)&& (HAL_GetTick()-cooling_timer_fan > COOLING_HANGOVER_ms)) {
 			digital_pump_state = PUMP_DIGITAL_OFF;
 	}
 
 	//radiator fan
-	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C)) {
+	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C) || (swButon4_state.data)) {
 			rad_fan_state = RAD_FAN_ON;
-	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C)) {
+			cooling_timer_fan = HAL_GetTick();
+	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (HAL_GetTick()-cooling_timer_fan > COOLING_HANGOVER_ms)) {
 			rad_fan_state = RAD_FAN_OFF;
 	}
 
