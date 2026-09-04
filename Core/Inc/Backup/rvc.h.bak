@@ -26,7 +26,7 @@
 
 // ========================================== PWM CONSTANTS =========================================
 #define TIM2_PWM_MAX	1600 //value where max overflow happens, defined in IOC in timer config
-
+#define DRS_HYSTERESIS			  5.0f
 // ======================================= APPS PARAMETERS ======================================
 #define APPS_MAX_TORQUE_POS_mm  21.5f // The position of the pedal at 100% torque
 #define APPS_MIN_TORQUE_POS_mm  2.5f  // The position of the pedal at 0% torque
@@ -62,13 +62,15 @@
 #define PREDRIVE_TIME_ms           2000 // The length of predrive in ms
 #define RTD_BUTTON_PUSHED          (GPIO_PIN_RESET)
 #define TS_ON_THRESHOLD_VOLTAGE_V  190
+#define TSSI_FLASH_PERIOD_ms       300
+#define TSSI_RESET_TIME_ms         12000
 // ==============================================================================================
 
 
 // ====================================== SAFETY PARAMETERS =====================================
 // -------------------------------------- Input Validation --------------------------------------
-#define INPUT_TRIP_DELAY_ms 85  // The amount of time it takes an input fault to take effect
-
+#define INPUT_DELAY_ms 85  // In ms The amount of time it takes an input fault to take effect
+#define BSPD_DELAY_ms 400 // In ms amount of time before bspd fault trips
 // -------------------------------------- APPS/Brake Check --------------------------------------
 // This check is done using APPS1 (since APPS1 determines the applied torque) and the BSE
 #define APPS_BRAKE_PRESS_THRESH_psi  100.0f  // The minimum amount of brake pressure that will trip
@@ -92,30 +94,24 @@
 // ==============================================================================================
 
 // ====================================== COOLING PARAMETERS ====================================
-#define INVERTER_TEMP_THRESH_C    40.0f // Minimum Inverter temp threshold for cooling fan to turn on
-#define INVERTER_TEMP_THRESH_C_1  43.0f //Inverter temp threshold + HYS_ANALOG * 1
-#define INVERTER_TEMP_THRESH_C_2  46.0f //Inverter temp threshold + HYS_ANALOG * 2
-#define INVERTER_TEMP_THRESH_C_3  49.0f //Inverter temp threshold + HYS_ANALOG * 3
-#define INVERTER_TEMP_THRESH_C_4  52.0f //Inverter temp threshold + HYS_ANALOG * 4
-
-#define MOTOR_TEMP_THRESH_C       45.0f // Minimum Motor temperature for cooling fan to turn on
-#define MOTOR_TEMP_THRESH_C_1     48.0f //Motor temp threshold + HYS_ANALOG * 1
-#define MOTOR_TEMP_THRESH_C_2     51.0f //Motor temp threshold + HYS_ANALOG * 2
-#define MOTOR_TEMP_THRESH_C_3     54.0f //Motor temp threshold + HYS_ANALOG * 3
-#define MOTOR_TEMP_THRESH_C_4     57.0f //Motor temp threshold + HYS_ANALOG * 4
-
-#define HYSTERESIS_DIGITAL	      3.0f // Hysteresis when confined to digital signal (on/off)
-#define HYSTERESIS_ANALOG	      3.0f // Hysteresis when have PWM output signal (variable duty cycle)
-
+#define INVERTER_PUMP_POWER_ON_THRESH 45.0f //Low Threshold Turn On
+#define MOTOR_PUMP_THRESH_C       45.0f // Motor temperature at which the cooling system turns on
+#define COOLING_HANGOVER_ms		 5000.0f 	// Amount of time cooling stays on after last press of buton
+#define INVERTER_FAN_THRESH_C    50.0f // Inverter temperature at which the cooling system turns on
+#define MOTOR_FAN_THRESH_C       50.0f // Motor temperature at which the cooling system turns on
+#define COOLING_HYSTERESIS_C      5.0f // Hysteresis when confined to digital signal (on/off)
+#define CAR_SPEED_FAN_HYS	      5.0f // Hysteresis on Car speed for turning on/off fans
+#define CAR_SPEED_FAN_THRESH	  20.0f // Car speed at which air cooling from movement is enough
 //#define USING_PUMP_PWM
-#define PUMP_INTENSITY_OFF		  0  //0% duty cycle --> 0/31999
-#define PUMP_INTENSITY_1		  8000 //25% duty cycle --> 8000/31999
-#define PUMP_INTENSITY_2		  16000 //50% duty cycle --> 16000/31999
-#define PUMP_INTENSITY_3		  24000 //75% duty cycle --> 24000/31999
-#define PUMP_INTENSITY_4		  31999 //100% duty cycle --> 31999/31999
+#define PUMP_OFF		  0  //0% duty cycle --> 0/49999
+#define PUMP_50_PERCENT  25000 //50% duty cycle --> 25000/49999
+#define PUMP_100_PERCENT 49999 //100% duty cycle --> 49999/49999
+#define PUMP_COUNTER_PERIOD	49999
+#define PUMP_PERCENT_OFFSET 0.5f //if the pump is on it will statr at 50%
 
-#define PUMP_DIGITAL_ON			  0
-#define PUMP_DIGITAL_OFF 		  1
+
+#define PUMP_DIGITAL_ON			  GPIO_PIN_RESET
+#define PUMP_DIGITAL_OFF 		  GPIO_PIN_SET
 // ==============================================================================================
 
 // =============================== SENSOR OVERCURRENT PARAMETERS ================================
@@ -134,7 +130,7 @@
 #define WHEEL_DIAMETER_IN       10     // Wheel diameter
 #define MOTOR_POLE_PAIRS   		10 	   // Amount of Pole Pairs of the EMRAX Motor
 #define BSPD_POWER_LIMIT		4000   // 5 kW limit before a car shutdown is required, 4 kW with buffer
-
+#define DRIVE_RATIO				0.0255754 //erpm of motor to mph of the car
 // ==============================================================================================
 
 // ================================== TRACTIVE SYSTEM PARAMETERS 2024 ================================
@@ -151,6 +147,8 @@
 #define PLM_CONTROL_OFF (GPIO_PIN_SET)
 #define RAD_FAN_ON (GPIO_PIN_SET)
 #define RAD_FAN_OFF (GPIO_PIN_RESET)
+#define PCB_BUZZ_ON (GPIO_PIN_SET)
+#define PCB_BUZZ_OFF (GPIO_PIN_RESET)
 // ==============================================================================================
 
 // ======================================= BSPD PARAMETERS ======================================
@@ -171,8 +169,21 @@
 #define BSPD_BRAKE_FAULT     GPIO_PIN_RESET
 #define BSPD_TS_SNS_FAULT    GPIO_PIN_RESET
 #define BSPD_TS_BRK_FAULT    GPIO_PIN_SET
-// ==============================================================================================
+// =========================================Current Sensing=====================================================
 
+#define CURRENT_HIGH_RAIL_THRESHOLD             852
+#define CURRENT_LOW_RAIL_THRESHOLD              87
+#define CURRENT_LOW_TO_HIGH_SWITCH_THRESHOLD    75
+// The size in Amps across which current from channel 1 is blended with channel 2
+#define CHANNEL_FILTERING_WIDTH 4
+
+
+typedef enum
+{
+	UNINITIALIZED = 0,	// Value on startup
+	WORKING,			// Data nominal
+	FAULTING			// Unavailable data or hardware issue
+} Sensor_Status_E;
 
 // =================== THROTTLE CALCULATION ===================
 // Throttle is calculated using APPS1 with APPS2 being used
@@ -211,7 +222,15 @@ typedef enum {
 	INVERTER_FAULT
 } DISPLAY_FAULT_STATUS_t;
 
-extern VEHICLE_STATE_t vehicle_state;
+typedef enum {
+    PUMP_STATE_OFF,
+    PUMP_STATE_ON,
+} PUMP_STATE;
+
+typedef enum {
+    FAN_STATE_OFF,
+    FAN_STATE_ON
+} FAN_STATE;
 
 
 void init(CAN_HandleTypeDef* hcan_ptr);
@@ -220,8 +239,9 @@ void can_buffer_handling_loop();
 
 void update_RTD();         // Ready to drive logic
 void process_sensors();    // Runs safety checks on driver inputs
+void check_faults();
 void update_gcan_states(); // Updates GopherCAN states
-void update_outputs();     // Updates brake light and buzzer
+void update_brakelight_and_buzzer();   // Updates brake light and buzzer
 void update_cooling();     // Controls/updates the cooling system
 void update_display_fault_status(); 	// Check all vehicle fault messages and sends best one to display
 void update_brakeBias();
@@ -235,4 +255,6 @@ void launch_control_sm();
 boolean isVehicleMoving();
 void set_inv_disabled();
 int get_current_limit(boolean driving_mode);
+void init_pullup_configs();
+float getTractiveSystemCurrent();
 #endif /* INC_RVC_H_ */

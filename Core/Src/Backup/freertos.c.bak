@@ -25,7 +25,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "rvc.h"
+#include "adc.h"
+#include "gopher_sense.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -131,7 +133,7 @@ void task_MainTask(void const * argument)
   for(;;)
   {
 	main_loop();
-    osDelay(1);
+	osDelay(1);
   }
   /* USER CODE END task_MainTask */
 }
