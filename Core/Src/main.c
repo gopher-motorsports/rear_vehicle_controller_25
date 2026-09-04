@@ -139,6 +139,19 @@ int main(void)
 //     );
   setup_pulse_sensor_vss(
     		  &htim2,
+     		  TIM_CHANNEL_2,
+     		  CONVERSION_RATIO,
+     		  &(wheelSpeedRearLeft_mph.data),
+    		  DMA_STOPPED_TIMEOUT_MS,
+     		  USE_VAR_SS,
+     		  LOW_SAMPLES,
+     		  HIGH_SAMPLES,
+    		  MIN_SAMPLES,
+    		  64
+       );
+
+  setup_pulse_sensor_vss(
+    		  &htim2,
      		  TIM_CHANNEL_4,
      		  CONVERSION_RATIO,
      		  &(wheelSpeedRearRight_mph.data),

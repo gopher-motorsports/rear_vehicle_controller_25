@@ -9,6 +9,8 @@
 #include "rvc.h"
 #include "gopher_sense.h"
 #include "drs.h"
+#include "GopherCAN.h"
+#include "pulse_sensor.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -70,7 +72,10 @@ void init(CAN_HandleTypeDef* hcan_ptr) {
 	init_can(hcan, GCAN1);
 }
 
+int PulseSensorStatus = 0;
+
 void main_loop() {
+	PulseSensorStatus = check_pulse_sensors();
 	check_faults();
     update_cooling();
 	update_gcan_states(); // Should be after proceass_sensors
@@ -168,6 +173,10 @@ void update_gcan_states() {
 	//SDC Sense:
 	update_and_queue_param_u8(&sdcStatus8, HAL_GPIO_ReadPin(SDC_IN_SENSE_GPIO_Port, SDC_IN_SENSE_Pin));
 	update_and_queue_param_u8(&sdcStatus9, HAL_GPIO_ReadPin(SDC_OUT_SENSE_GPIO_Port, SDC_OUT_SENSE_Pin));
+
+	// Wheel Speed
+	update_and_queue_param_float(&wheelSpeedRearLeft_mph, wheelSpeedRearLeft_mph.data);
+	update_and_queue_param_float(&wheelSpeedRearRight_mph, wheelSpeedRearRight_mph.data);
 }
 
 void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
