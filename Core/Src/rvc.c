@@ -48,7 +48,7 @@ uint8_t currentSensorStatus = UNINITIALIZED;
 uint32_t cooling_timer_pump = 0;
 uint32_t cooling_timer_fan = 0;
 uint32_t startup_timer_pump = 0;
-boolean cooling_startup = TRUE;
+boolean cooling_startup = FALSE;
 
 //Fan
 boolean steady_temperatures_achieved_fan[] = {true, true}; //LOT if fan temperatures have returned to steady state, implemented to stop double counting
@@ -61,7 +61,8 @@ U32 PUMP_Channel;
 float pump_percent;
 boolean steady_temperatures_achieved_pump[] = {true, true}; //LOT if pump temperatures have returned to ready state
 U8 pump_readings_below_HYS_threshold = 0;
-
+Pump_Status current_Pump_State = OFF;
+float pump_pwm_signal = PUMP_OFF;
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
 
@@ -186,14 +187,13 @@ void init_Pump(TIM_HandleTypeDef* timer_address, U32 channel){
 	PUMP_PWM_Timer = timer_address;
 	PUMP_Channel = channel;
 	HAL_TIM_PWM_Start(PUMP_PWM_Timer, PUMP_Channel); //turn on PWM generation
+	__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, PUMP_100_PERCENT);
 }
 
 float inv_temp = 0;
 float motor_temp = 0;
 void update_cooling() {
-	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO;
-
-	float pump_pwm_signal = 0.0;
+	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO
 
 	//TODO:DELETE
 	float testing_temperature_inv = 0.0;
@@ -211,32 +211,44 @@ void update_cooling() {
 	float above_inv_temp = inv_temp - INVERTER_PUMP_POWER_ON_THRESH;
 	float above_motor_temp = motor_temp - MOTOR_PUMP_THRESH_C;
 
-	float linear_temp_range = COOLING_MAXIMUM_TEMP - 0.0; //range is from [THRESH, MAXIUMUM_TEMP]
+	//float linear_temp_range = COOLING_MAXIMUM_TEMP - 0.0; //range is from [THRESH, MAXIUMUM_TEMP]
 	float linear_pump_range = PUMP_100_PERCENT - PUMP_10_PERCENT;
 
-	//Pump Startup
-	//TODO: Test/Find how long the pump has to run for startup, replace COOLING_HANGOVER_ms
-	if (cooling_startup && (HAL_GetTick() - startup_timer_pump > STARTUP_DURATION_ms)) {
-		startup_timer_pump = HAL_GetTick();
-		pump_pwm_signal = PUMP_100_PERCENT;
+	if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF) {
+		cooling_startup = TRUE;
 	}
-	else {
+	else if ((above_inv_temp < 0 || above_motor_temp < 0) && current_Pump_State == TEMPERATURE_MAP){
+		current_Pump_State = OFF; //If temperatures are below the threshold and the pump is not doing startup
+								  //then it will turn off
+	}
+
+	if (cooling_startup && current_Pump_State == OFF) {
+		startup_timer_pump = HAL_GetTick(); //Starts timer for STARTUP_FULL to turn off after STARTUP_DURATION_ms
+		current_Pump_State = STARTUP_FULL;
+	}
+	else if (current_Pump_State == STARTUP_FULL && HAL_GetTick() - startup_timer_pump > STARTUP_DURATION_ms) {
+		current_Pump_State = TEMPERATURE_MAP; //After STARTUP_FULL's full duration then TEMPERATURE_MAP is used
 		cooling_startup = FALSE;
 	}
-	//Pump
-	if (above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) {
-			digital_pump_state = PUMP_DIGITAL_ON;
-			cooling_timer_pump = HAL_GetTick();
 
-			float highest_temp = fmaxf(above_inv_temp, above_motor_temp);
-			if (highest_temp > COOLING_MAXIMUM_TEMP) { highest_temp = COOLING_MAXIMUM_TEMP; }
-
-			pump_pwm_signal = ((highest_temp / COOLING_MAXIMUM_TEMP) * (linear_pump_range)) + PUMP_10_PERCENT;
-//TODO: Check on error in 238: cooling_timer_fan instead of cooling_timer_pump (cooling_timer_pump does nothing as of now)
-	} else if ((!cooling_startup && above_inv_temp - COOLING_HYSTERESIS_C  < 0) && (above_motor_temp - COOLING_HYSTERESIS_C < 0) && (HAL_GetTick()-cooling_timer_fan > COOLING_HANGOVER_ms)) {
-			digital_pump_state = PUMP_DIGITAL_OFF;
+	switch (current_Pump_State) {
+		case OFF:
 			pump_pwm_signal = PUMP_OFF;
+			break;
+
+		case STARTUP_FULL:
+			pump_pwm_signal = PUMP_100_PERCENT;
+			break;
+
+		case TEMPERATURE_MAP:
+			float highest_temp = fmaxf(above_inv_temp, above_motor_temp);
+			if (highest_temp < 0) { highest_temp = 0; }
+			if (highest_temp > COOLING_MAXIMUM_TEMP) { highest_temp = COOLING_MAXIMUM_TEMP; }
+			pump_pwm_signal = linear_pump_range - ((highest_temp / COOLING_MAXIMUM_TEMP) * (linear_pump_range));
+			break;
 	}
+
+	__HAL_TIM_SET_COMPARE(PUMP_PWM_GPIO_Port, PUMP_PWM_Pin, pump_pwm_signal);
 
 	//radiator fan
 	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C) || (swButon4_state.data)) {
@@ -245,7 +257,6 @@ void update_cooling() {
 	} else if ((inv_temp < INVERTER_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (motor_temp < MOTOR_FAN_THRESH_C - COOLING_HYSTERESIS_C) && (HAL_GetTick()-cooling_timer_fan > COOLING_HANGOVER_ms)) {
 			rad_fan_state = RAD_FAN_OFF;
 	}
-	HAL_GPIO_WritePin(PUMP_PWM_GPIO_Port, PUMP_PWM_Pin, pump_pwm_signal);
 }
 
 void update_brakelight_and_buzzer(){

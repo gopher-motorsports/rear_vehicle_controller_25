@@ -112,6 +112,13 @@
 #define PUMP_COUNTER_PERIOD	30100
 #define PUMP_PERCENT_OFFSET 0.5f //if the pump is on it will start at 50%
 
+typedef enum
+{
+	OFF = 0,			// Value on startup
+	STARTUP_FULL = 1,		// When pump is turned on it will first hold 100 percent flow for several seconds
+	TEMPERATURE_MAP = 2		// After STARTUP_FULL, if the temperature is not under range, the pump adjusts based on how high the temperature is.
+} Pump_Status;
+
 
 #define PUMP_DIGITAL_ON			  GPIO_PIN_RESET
 #define PUMP_DIGITAL_OFF 		  GPIO_PIN_SET
