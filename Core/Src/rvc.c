@@ -62,7 +62,7 @@ float pump_percent;
 boolean steady_temperatures_achieved_pump[] = {true, true}; //LOT if pump temperatures have returned to ready state
 U8 pump_readings_below_HYS_threshold = 0;
 Pump_Status current_Pump_State = OFF;
-float pump_pwm_signal = PUMP_OFF;
+uint32_t pump_pwm_signal = PUMP_OFF;
 U8 digital_pump_state = PUMP_DIGITAL_OFF; //if no pump pwm and just digital
 
 
@@ -248,7 +248,7 @@ void update_cooling() {
 			break;
 	}
 
-	__HAL_TIM_SET_COMPARE(PUMP_PWM_GPIO_Port, PUMP_PWM_Pin, pump_pwm_signal);
+	__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_PWM_Pin, pump_pwm_signal);
 
 	//radiator fan
 	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C) || (swButon4_state.data)) {
