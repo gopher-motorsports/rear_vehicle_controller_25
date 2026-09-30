@@ -106,7 +106,7 @@
 #define CAR_SPEED_FAN_THRESH	  20.0f // Car speed at which air cooling from movement is enough
 //#define USING_PUMP_PWM
 #define PUMP_OFF		  	0  //0% duty cycle --> 0/30100
-#define PUMP_10_PERCENT  	3010 //10% duty cycle --> 3010/30100
+#define PUMP_20_PERCENT  	6020 //10% duty cycle --> 6020/30100
 #define PUMP_50_PERCENT  	15050 //50% duty cycle --> 15050/30100
 #define PUMP_100_PERCENT 	30100 //100% duty cycle --> 30100/30100
 #define PUMP_COUNTER_PERIOD	30100

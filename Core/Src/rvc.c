@@ -212,7 +212,7 @@ void update_cooling() {
 	float above_motor_temp = motor_temp - MOTOR_PUMP_THRESH_C;
 
 	//float linear_temp_range = COOLING_MAXIMUM_TEMP - 0.0; //range is from [THRESH, MAXIUMUM_TEMP]
-	float linear_pump_range = PUMP_100_PERCENT - PUMP_10_PERCENT;
+	float linear_pump_range = PUMP_100_PERCENT - PUMP_20_PERCENT;
 
 	if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF) {
 		cooling_startup = TRUE;
