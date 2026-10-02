@@ -196,8 +196,8 @@ void update_cooling() {
 	//motor_mph = electricalRPM_erpm.data * DRIVE_RATIO
 
 	//TODO:DELETE
-	float testing_temperature_inv = 0.0;
-	float testing_temperature_motor = 0.0;
+	float testing_temperature_inv = 52.5;
+	float testing_temperature_motor = 52.5;
 	//TODO:DELETE
 
 	float inv_temp = fvcControllerTemp_C.data;
@@ -214,18 +214,20 @@ void update_cooling() {
 	//float linear_temp_range = COOLING_MAXIMUM_TEMP - 0.0; //range is from [THRESH, MAXIUMUM_TEMP]
 	float linear_pump_range = PUMP_100_PERCENT - PUMP_20_PERCENT;
 
-
-	if ((above_inv_temp < 0 || above_motor_temp < 0) && current_Pump_State == DYANAMIC_COOLING){
+	if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF) {
+		cooling_startup = TRUE;
+	}
+	else if ((above_inv_temp < 0 || above_motor_temp < 0) && current_Pump_State == DYANAMIC_COOLING){
 		current_Pump_State = OFF; //If temperatures are below the threshold and the pump is not doing startup
 								  //then it will turn off
 	}
-	else if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF && cooling_startup == FALSE) {
-		cooling_startup = TRUE;
+
+	if (cooling_startup && current_Pump_State == OFF) {
 		startup_timer_pump = HAL_GetTick(); //Starts timer for STARTUP_FULL to turn off after STARTUP_DURATION_ms
 		current_Pump_State = STARTUP_COOLING;
 	}
 	else if (current_Pump_State == STARTUP_COOLING && HAL_GetTick() - startup_timer_pump > STARTUP_DURATION_ms) {
-		current_Pump_State = DYANAMIC_COOLING; //After STARTUP_COOLING's full duration then TEMPERATURE_MAP is used
+		current_Pump_State = DYANAMIC_COOLING; //After STARTUP_FULL's full duration then TEMPERATURE_MAP is used
 		cooling_startup = FALSE;
 	}
 
@@ -246,7 +248,7 @@ void update_cooling() {
 			break;
 	}
 
-	__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_PWM_Pin, pump_pwm_signal);
+	__HAL_TIM_SET_COMPARE(PUMP_PWM_Timer, PUMP_Channel, pump_pwm_signal);
 
 	//radiator fan
 	if ((inv_temp > INVERTER_FAN_THRESH_C) || (motor_temp > MOTOR_FAN_THRESH_C) || (swButon4_state.data)) {
