@@ -214,20 +214,18 @@ void update_cooling() {
 	//float linear_temp_range = COOLING_MAXIMUM_TEMP - 0.0; //range is from [THRESH, MAXIUMUM_TEMP]
 	float linear_pump_range = PUMP_100_PERCENT - PUMP_20_PERCENT;
 
-	if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF) {
-		cooling_startup = TRUE;
-	}
-	else if ((above_inv_temp < 0 || above_motor_temp < 0) && current_Pump_State == TEMPERATURE_MAP){
+
+	if ((above_inv_temp < 0 || above_motor_temp < 0) && current_Pump_State == DYANAMIC_COOLING){
 		current_Pump_State = OFF; //If temperatures are below the threshold and the pump is not doing startup
 								  //then it will turn off
 	}
-
-	if (cooling_startup && current_Pump_State == OFF) {
+	else if ((above_inv_temp > 0 || above_motor_temp > 0 || (swButon4_state.data)) && current_Pump_State == OFF && cooling_startup == FALSE) {
+		cooling_startup = TRUE;
 		startup_timer_pump = HAL_GetTick(); //Starts timer for STARTUP_FULL to turn off after STARTUP_DURATION_ms
-		current_Pump_State = STARTUP_FULL;
+		current_Pump_State = STARTUP_COOLING;
 	}
-	else if (current_Pump_State == STARTUP_FULL && HAL_GetTick() - startup_timer_pump > STARTUP_DURATION_ms) {
-		current_Pump_State = TEMPERATURE_MAP; //After STARTUP_FULL's full duration then TEMPERATURE_MAP is used
+	else if (current_Pump_State == STARTUP_COOLING && HAL_GetTick() - startup_timer_pump > STARTUP_DURATION_ms) {
+		current_Pump_State = DYANAMIC_COOLING; //After STARTUP_COOLING's full duration then TEMPERATURE_MAP is used
 		cooling_startup = FALSE;
 	}
 
@@ -236,11 +234,11 @@ void update_cooling() {
 			pump_pwm_signal = PUMP_OFF;
 			break;
 
-		case STARTUP_FULL:
+		case STARTUP_COOLING:
 			pump_pwm_signal = PUMP_100_PERCENT;
 			break;
 
-		case TEMPERATURE_MAP:
+		case DYANAMIC_COOLING:
 			float highest_temp = fmaxf(above_inv_temp, above_motor_temp);
 			if (highest_temp < 0) { highest_temp = 0; }
 			if (highest_temp > COOLING_MAXIMUM_TEMP) { highest_temp = COOLING_MAXIMUM_TEMP; }

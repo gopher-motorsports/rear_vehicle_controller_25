@@ -115,8 +115,8 @@
 typedef enum
 {
 	OFF = 0,			// Value on startup
-	STARTUP_FULL = 1,		// When pump is turned on it will first hold 100 percent flow for several seconds
-	TEMPERATURE_MAP = 2		// After STARTUP_FULL, if the temperature is not under range, the pump adjusts based on how high the temperature is.
+	STARTUP_COOLING = 1,		// When pump is turned on it will first hold 100 percent flow for several seconds
+	DYANAMIC_COOLING = 2		// After STARTUP_FULL, if the temperature is not under range, the pump adjusts based on how high the temperature is.
 } Pump_Status;
 
 
