@@ -137,6 +137,8 @@ int main(void)
 //  		  MIN_SAMPLES,
 //  		  64
 //     );
+
+   /* TEMP: for testing pulse sensor
   setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_2,
@@ -149,7 +151,7 @@ int main(void)
     		  MIN_SAMPLES,
     		  64
        );
-
+*/
   setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_4,
@@ -272,8 +274,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
