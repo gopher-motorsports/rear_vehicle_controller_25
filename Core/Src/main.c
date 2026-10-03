@@ -137,7 +137,7 @@ int main(void)
 //  		  MIN_SAMPLES,
 //  		  64
 //     );
-  /* TEMP: disable left sensor while debugging
+
    setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_2,
@@ -150,8 +150,8 @@ int main(void)
     		  MIN_SAMPLES,
     		  64
        );
-*/
-  setup_pulse_sensor_vss(
+
+  /*setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_4,
      		  CONVERSION_RATIO,
@@ -163,6 +163,7 @@ int main(void)
     		  MIN_SAMPLES,
     		  64
        );
+       */
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
