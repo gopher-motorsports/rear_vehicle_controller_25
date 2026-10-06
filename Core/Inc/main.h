@@ -103,8 +103,8 @@ void Error_Handler(void);
 #define RTD_BUTTON_GPIO_Port GPIOB
 #define CAN_TX1_Pin GPIO_PIN_13
 #define CAN_TX1_GPIO_Port GPIOB
-#define PUMP_OUTPUT_Pin GPIO_PIN_8
-#define PUMP_OUTPUT_GPIO_Port GPIOC
+#define PUMP_PWM_Pin GPIO_PIN_8
+#define PUMP_PWM_GPIO_Port GPIOC
 #define TH_SDA_Pin GPIO_PIN_9
 #define TH_SDA_GPIO_Port GPIOC
 #define TH_SCL_Pin GPIO_PIN_8

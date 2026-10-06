@@ -51,6 +51,7 @@
 #define LOW_SAMPLES 100
 #define HIGH_SAMPLES 1000
 #define MIN_SAMPLES 5
+#define USING_PUMP_PWM 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -120,7 +121,7 @@ int main(void)
   init(&hcan2);
   gsense_init(&hcan2, &hadc1, NULL, NULL, &htim10, GSENSE_LED_GPIO_Port, GSENSE_LED_Pin);
 #ifdef USING_PUMP_PWM
-  init_Pump(&htim8,TIM_CHANNEL_3);
+  init_Pump(&htim3,TIM_CHANNEL_3);
 #endif
   init_DRS_servo(&htim3, TIM_CHANNEL_1);
   init_pullup_configs();
