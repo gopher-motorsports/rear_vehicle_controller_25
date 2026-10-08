@@ -115,6 +115,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM10_Init();
   MX_USART1_UART_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
   init(&hcan2);
@@ -138,9 +139,8 @@ int main(void)
 //  		  64
 //     );
 
-   /* TEMP: for testing pulse sensor
   setup_pulse_sensor_vss(
-    		  &htim2,
+    		  &htim5,
      		  TIM_CHANNEL_2,
      		  CONVERSION_RATIO,
      		  &(wheelSpeedRearLeft_mph.data),
@@ -151,7 +151,8 @@ int main(void)
     		  MIN_SAMPLES,
     		  64
        );
-*/
+
+
   setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_4,
@@ -164,6 +165,7 @@ int main(void)
     		  MIN_SAMPLES,
     		  64
        );
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

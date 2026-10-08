@@ -27,9 +27,11 @@
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim10;
 DMA_HandleTypeDef hdma_tim2_ch2_ch4;
 DMA_HandleTypeDef hdma_tim2_up_ch3;
+DMA_HandleTypeDef hdma_tim5_ch2;
 
 /* TIM1 init function */
 void MX_TIM1_Init(void)
@@ -120,10 +122,6 @@ void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_3) != HAL_OK)
   {
     Error_Handler();
@@ -191,6 +189,59 @@ void MX_TIM3_Init(void)
   HAL_TIM_MspPostInit(&htim3);
 
 }
+/* TIM5 init function */
+void MX_TIM5_Init(void)
+{
+
+  /* USER CODE BEGIN TIM5_Init 0 */
+
+  /* USER CODE END TIM5_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM5_Init 1 */
+
+  /* USER CODE END TIM5_Init 1 */
+  htim5.Instance = TIM5;
+  htim5.Init.Prescaler = 8-1;
+  htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim5.Init.Period = 4294967295;
+  htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim5, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim5, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM5_Init 2 */
+
+  /* USER CODE END TIM5_Init 2 */
+
+}
 /* TIM10 init function */
 void MX_TIM10_Init(void)
 {
@@ -248,17 +299,16 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**TIM2 GPIO Configuration
-    PA1     ------> TIM2_CH2
     PA2     ------> TIM2_CH3
     PB2     ------> TIM2_CH4
     PB8     ------> TIM2_CH1
     */
-    GPIO_InitStruct.Pin = PULSE_SENSOR_4_Pin|PULSE_SENSOR_5_Pin;
+    GPIO_InitStruct.Pin = PULSE_SENSOR_5_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(PULSE_SENSOR_5_GPIO_Port, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = PULSE_SENSOR_3_Pin|PULSE_SENSOR_1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -276,7 +326,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     hdma_tim2_ch2_ch4.Init.MemInc = DMA_MINC_ENABLE;
     hdma_tim2_ch2_ch4.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_tim2_ch2_ch4.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    hdma_tim2_ch2_ch4.Init.Mode = DMA_NORMAL;
+    hdma_tim2_ch2_ch4.Init.Mode = DMA_CIRCULAR;
     hdma_tim2_ch2_ch4.Init.Priority = DMA_PRIORITY_LOW;
     hdma_tim2_ch2_ch4.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_tim2_ch2_ch4) != HAL_OK)
@@ -324,6 +374,48 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE BEGIN TIM3_MspInit 1 */
 
   /* USER CODE END TIM3_MspInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM5)
+  {
+  /* USER CODE BEGIN TIM5_MspInit 0 */
+
+  /* USER CODE END TIM5_MspInit 0 */
+    /* TIM5 clock enable */
+    __HAL_RCC_TIM5_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**TIM5 GPIO Configuration
+    PA1     ------> TIM5_CH2
+    */
+    GPIO_InitStruct.Pin = PULSE_SENSOR_4_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF2_TIM5;
+    HAL_GPIO_Init(PULSE_SENSOR_4_GPIO_Port, &GPIO_InitStruct);
+
+    /* TIM5 DMA Init */
+    /* TIM5_CH2 Init */
+    hdma_tim5_ch2.Instance = DMA1_Stream4;
+    hdma_tim5_ch2.Init.Channel = DMA_CHANNEL_6;
+    hdma_tim5_ch2.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_tim5_ch2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_tim5_ch2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_tim5_ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_tim5_ch2.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    hdma_tim5_ch2.Init.Mode = DMA_CIRCULAR;
+    hdma_tim5_ch2.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_tim5_ch2.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_tim5_ch2) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(tim_baseHandle,hdma[TIM_DMA_ID_CC2],hdma_tim5_ch2);
+
+  /* USER CODE BEGIN TIM5_MspInit 1 */
+
+  /* USER CODE END TIM5_MspInit 1 */
   }
   else if(tim_baseHandle->Instance==TIM10)
   {
@@ -402,12 +494,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM2_CLK_DISABLE();
 
     /**TIM2 GPIO Configuration
-    PA1     ------> TIM2_CH2
     PA2     ------> TIM2_CH3
     PB2     ------> TIM2_CH4
     PB8     ------> TIM2_CH1
     */
-    HAL_GPIO_DeInit(GPIOA, PULSE_SENSOR_4_Pin|PULSE_SENSOR_5_Pin);
+    HAL_GPIO_DeInit(PULSE_SENSOR_5_GPIO_Port, PULSE_SENSOR_5_Pin);
 
     HAL_GPIO_DeInit(GPIOB, PULSE_SENSOR_3_Pin|PULSE_SENSOR_1_Pin);
 
@@ -430,6 +521,25 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE BEGIN TIM3_MspDeInit 1 */
 
   /* USER CODE END TIM3_MspDeInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM5)
+  {
+  /* USER CODE BEGIN TIM5_MspDeInit 0 */
+
+  /* USER CODE END TIM5_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM5_CLK_DISABLE();
+
+    /**TIM5 GPIO Configuration
+    PA1     ------> TIM5_CH2
+    */
+    HAL_GPIO_DeInit(PULSE_SENSOR_4_GPIO_Port, PULSE_SENSOR_4_Pin);
+
+    /* TIM5 DMA DeInit */
+    HAL_DMA_DeInit(tim_baseHandle->hdma[TIM_DMA_ID_CC2]);
+  /* USER CODE BEGIN TIM5_MspDeInit 1 */
+
+  /* USER CODE END TIM5_MspDeInit 1 */
   }
   else if(tim_baseHandle->Instance==TIM10)
   {
