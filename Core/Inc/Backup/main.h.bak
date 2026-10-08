@@ -69,6 +69,8 @@ void Error_Handler(void);
 #define MCU_AUX_2_GPIO_Port GPIOE
 #define VOLT_SENSE_3_Pin GPIO_PIN_0
 #define VOLT_SENSE_3_GPIO_Port GPIOA
+#define PULSE_SENSOR_4_Pin GPIO_PIN_1
+#define PULSE_SENSOR_4_GPIO_Port GPIOA
 #define PULSE_SENSOR_5_Pin GPIO_PIN_2
 #define PULSE_SENSOR_5_GPIO_Port GPIOA
 #define Curr_Sense_H_Pin GPIO_PIN_3
