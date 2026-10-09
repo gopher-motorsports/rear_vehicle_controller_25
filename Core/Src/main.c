@@ -140,8 +140,8 @@ int main(void)
 //     );
 
   setup_pulse_sensor_vss(
-    		  &htim5,
-     		  TIM_CHANNEL_2,
+    		  &htim2,
+     		  TIM_CHANNEL_3,
      		  CONVERSION_RATIO,
      		  &(wheelSpeedRearLeft_mph.data),
     		  DMA_STOPPED_TIMEOUT_MS,

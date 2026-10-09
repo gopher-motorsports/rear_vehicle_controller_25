@@ -141,7 +141,7 @@ int main(void)
 
   setup_pulse_sensor_vss(
     		  &htim5,
-     		  TIM_CHANNEL_2,
+     		  TIM_CHANNEL_3,
      		  CONVERSION_RATIO,
      		  &(wheelSpeedRearLeft_mph.data),
     		  DMA_STOPPED_TIMEOUT_MS,
@@ -153,7 +153,7 @@ int main(void)
        );
 
 
-  setup_pulse_sensor_vss(
+//  setup_pulse_sensor_vss(
     		  &htim2,
      		  TIM_CHANNEL_4,
      		  CONVERSION_RATIO,
@@ -276,7 +276,8 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-#ifdef USE_FULL_ASSERT
+
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
